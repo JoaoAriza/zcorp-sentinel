@@ -1,0 +1,568 @@
+import { useEffect, useState } from "react";
+import {
+  AlertTriangle,
+  ShieldCheck,
+  Activity,
+  Radio,
+  UserCheck,
+  Plus,
+  X,
+} from "lucide-react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
+import { api } from "./services/api";
+import "./App.css";
+
+type RecentRiskCase = {
+  id: string;
+  source: string;
+  channel: string;
+  subject: string;
+  riskScore: number;
+  classification: string;
+  createdAt: string;
+};
+
+type DashboardSummary = {
+  totalCases: number;
+  lowCases: number;
+  mediumCases: number;
+  highCases: number;
+  criticalCases: number;
+  averageRiskScore: number;
+  casesByChannel: Record<string, number>;
+  recentCases: RecentRiskCase[];
+};
+
+type NewIncidentForm = {
+  source: string;
+  channel: string;
+  subject: string;
+  detectedSignals: string[];
+};
+
+const availableSignals = [
+  "voice_clone",
+  "face_mismatch",
+  "executive_impersonation",
+  "synthetic_identity",
+  "behavior_anomaly",
+  "urgent_language",
+];
+
+const initialForm: NewIncidentForm = {
+  source: "",
+  channel: "voice",
+  subject: "",
+  detectedSignals: [],
+};
+
+function App() {
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState<NewIncidentForm>(initialForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [search, setSearch] = useState("");
+  const [channelFilter, setChannelFilter] = useState("all");
+  const [severityFilter, setSeverityFilter] = useState("all");
+  const [selectedCase, setSelectedCase] = useState<RecentRiskCase | null>(null);
+  const [lastTotalCases, setLastTotalCases] = useState<number | null>(null);
+  const [notification, setNotification] = useState<string | null>(null);
+
+  async function loadDashboard(showNotification = false) {
+    const response = await api.get<DashboardSummary>("/dashboard/summary");
+    const nextSummary = response.data;
+
+    setSummary((currentSummary) => {
+      const previousTotal = currentSummary?.totalCases ?? lastTotalCases;
+
+      if (
+        showNotification &&
+        previousTotal !== null &&
+        nextSummary.totalCases > previousTotal
+      ) {
+        setNotification("New identity risk incident detected");
+
+        setTimeout(() => {
+          setNotification(null);
+        }, 3200);
+      }
+
+      return nextSummary;
+    });
+
+    setLastTotalCases(nextSummary.totalCases);
+  }
+
+  async function createIncident() {
+    if (!form.source.trim() || !form.subject.trim()) return;
+
+    setIsSubmitting(true);
+
+    await api.post("/identity-risk-cases", form);
+
+    setForm(initialForm);
+    setIsModalOpen(false);
+    await loadDashboard();
+
+    setIsSubmitting(false);
+  }
+
+  function toggleSignal(signal: string) {
+    setForm((current) => ({
+      ...current,
+      detectedSignals: current.detectedSignals.includes(signal)
+        ? current.detectedSignals.filter((item) => item !== signal)
+        : [...current.detectedSignals, signal],
+    }));
+  }
+
+  useEffect(() => {
+    loadDashboard();
+
+    const intervalId = window.setInterval(() => {
+      loadDashboard(true);
+    }, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
+  if (!summary) {
+    return <div className="loading">Loading Sentinel dashboard...</div>;
+  }
+
+  const severityData = [
+    { name: "Low", value: summary.lowCases },
+    { name: "Medium", value: summary.mediumCases },
+    { name: "High", value: summary.highCases },
+    { name: "Critical", value: summary.criticalCases },
+  ];
+
+  const channelData = Object.entries(summary.casesByChannel).map(([name, value]) => ({
+    name,
+    value,
+  }));
+
+  const filteredCases = summary.recentCases.filter((riskCase) => {
+    const matchesSearch =
+      riskCase.subject.toLowerCase().includes(search.toLowerCase()) ||
+      riskCase.source.toLowerCase().includes(search.toLowerCase()) ||
+      riskCase.channel.toLowerCase().includes(search.toLowerCase());
+
+    const matchesChannel =
+      channelFilter === "all" || riskCase.channel === channelFilter;
+
+    const matchesSeverity =
+      severityFilter === "all" || riskCase.classification === severityFilter;
+
+    return matchesSearch && matchesChannel && matchesSeverity;
+  });
+
+  const severityColors: Record<string, string> = {
+    Low: "#22c55e",
+    Medium: "#eab308",
+    High: "#f97316",
+    Critical: "#f43f5e",
+  };
+
+  const channelColors: Record<string, string> = {
+    voice: "#38bdf8",
+    video: "#a78bfa",
+    chat: "#22c55e",
+    email: "#f97316",
+  };
+
+  const tooltipStyle = {
+    background: "#0f172a",
+    border: "1px solid rgba(148, 163, 184, 0.22)",
+    borderRadius: "14px",
+    color: "#e5eefb",
+  };
+
+  return (
+    <main className="page">
+      {notification && (
+        <div className="toast">
+          <div className="toast-pulse" />
+          <span>{notification}</span>
+        </div>
+      )}
+      <section className="hero">
+        <div>
+          <p className="eyebrow">ZCorp Sentinel Authenticity</p>
+          <h1>Deepfake & Impersonation Defense Command Center</h1>
+          <p className="subtitle">
+            Monitor identity risk, synthetic signals, voice clone patterns and executive impersonation attempts in real time.
+          </p>
+        </div>
+
+        <div className="hero-actions">
+          <button className="primary-action" onClick={() => setIsModalOpen(true)}>
+            <Plus size={18} />
+            New Incident
+          </button>
+
+          <div className="status-card">
+            <div className="status-pulse" />
+            <span>System online</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="kpi-grid">
+        <div className="kpi-card animated-card">
+          <ShieldCheck />
+          <span>Total Cases</span>
+          <strong>{summary.totalCases}</strong>
+        </div>
+
+        <div className="kpi-card animated-card">
+          <Activity />
+          <span>Average Risk</span>
+          <strong>{summary.averageRiskScore}</strong>
+        </div>
+
+        <div className="kpi-card danger animated-card">
+          <AlertTriangle />
+          <span>Critical</span>
+          <strong>{summary.criticalCases}</strong>
+        </div>
+
+        <div className="kpi-card animated-card">
+          <Radio />
+          <span>High Risk</span>
+          <strong>{summary.highCases}</strong>
+        </div>
+      </section>
+
+      <section className="dashboard-grid">
+        <div className="panel">
+          <div className="panel-header">
+            <h2>Risk Severity</h2>
+            <span>classification distribution</span>
+          </div>
+
+          <div className="chart-block" onMouseDown={(event) => event.preventDefault()}>
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart accessibilityLayer={false}>
+                <Pie
+                  data={severityData.filter((item) => item.value > 0)}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={56}
+                  outerRadius={92}
+                  paddingAngle={4}
+                  stroke="rgba(15, 23, 42, 0.9)"
+                  strokeWidth={4}
+                  activeShape={false}
+                >
+                  {severityData
+                    .filter((item) => item.value > 0)
+                    .map((entry) => (
+                      <Cell key={entry.name} fill={severityColors[entry.name] ?? "#38bdf8"} />
+                    ))}
+                </Pie>
+                <Tooltip
+                  cursor={false}
+                  contentStyle={tooltipStyle}
+                  itemStyle={{ color: "#e5eefb" }}
+                  labelStyle={{ color: "#93c5fd" }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="panel-header">
+            <h2>Cases by Channel</h2>
+            <span>voice, video, chat and email</span>
+          </div>
+
+          <div className="chart-block" onMouseDown={(event) => event.preventDefault()}>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={channelData} barCategoryGap="32%" accessibilityLayer={false}>
+                <XAxis
+                  dataKey="name"
+                  axisLine={{ stroke: "rgba(148, 163, 184, 0.22)" }}
+                  tickLine={false}
+                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  axisLine={{ stroke: "rgba(148, 163, 184, 0.22)" }}
+                  tickLine={false}
+                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                />
+                <Tooltip
+                  cursor={false}
+                  contentStyle={tooltipStyle}
+                  itemStyle={{ color: "#e5eefb" }}
+                  labelStyle={{ color: "#93c5fd" }}
+                />
+                <Bar
+                  dataKey="value"
+                  radius={[12, 12, 4, 4]}
+                  animationDuration={500}
+                  activeBar={false}
+                >
+                  {channelData.map((entry) => (
+                    <Cell key={entry.name} fill={channelColors[entry.name] ?? "#38bdf8"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-header">
+          <h2>Recent Identity Risk Cases</h2>
+          <span>latest flagged interactions</span>
+        </div>
+
+        <div className="filters">
+          <input
+            value={search}
+            placeholder="Search by subject, source or channel..."
+            onChange={(event) => setSearch(event.target.value)}
+          />
+
+          <select
+            value={channelFilter}
+            onChange={(event) => setChannelFilter(event.target.value)}
+          >
+            <option value="all">All channels</option>
+            <option value="voice">Voice</option>
+            <option value="video">Video</option>
+            <option value="chat">Chat</option>
+            <option value="email">Email</option>
+          </select>
+
+          <select
+            value={severityFilter}
+            onChange={(event) => setSeverityFilter(event.target.value)}
+          >
+            <option value="all">All severities</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+
+        <div className="case-list">
+          {filteredCases.map((riskCase) => (
+            <div className="case-row clickable animated-row"
+              key={riskCase.id}
+              onClick={() => setSelectedCase(riskCase)}>
+              <div className="case-icon">
+                <UserCheck size={20} />
+              </div>
+
+              <div className="case-main">
+                <strong>{riskCase.subject}</strong>
+                <span>{riskCase.source} · {riskCase.channel}</span>
+              </div>
+
+              <div className={`badge ${riskCase.classification.toLowerCase()}`}>
+                {riskCase.classification}
+              </div>
+
+              <div className="score">{riskCase.riskScore}</div>
+            </div>
+          ))}
+          {filteredCases.length === 0 && (
+            <div className="empty-state">
+              No incidents found for the selected filters.
+            </div>
+          )}
+        </div>
+      </section>
+
+      {isModalOpen && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">New Identity Risk Case</p>
+                <h2>Create Incident</h2>
+              </div>
+
+              <button className="icon-button" onClick={() => setIsModalOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="form-grid">
+              <label>
+                Source
+                <input
+                  value={form.source}
+                  placeholder="mobile-banking"
+                  onChange={(event) =>
+                    setForm({ ...form, source: event.target.value })
+                  }
+                />
+              </label>
+
+              <label>
+                Channel
+                <select
+                  value={form.channel}
+                  onChange={(event) =>
+                    setForm({ ...form, channel: event.target.value })
+                  }
+                >
+                  <option value="voice">Voice</option>
+                  <option value="video">Video</option>
+                  <option value="chat">Chat</option>
+                  <option value="email">Email</option>
+                </select>
+              </label>
+
+              <label className="full">
+                Subject
+                <input
+                  value={form.subject}
+                  placeholder="CEO approval call"
+                  onChange={(event) =>
+                    setForm({ ...form, subject: event.target.value })
+                  }
+                />
+              </label>
+            </div>
+
+            <div className="signals">
+              <span>Detected Signals</span>
+
+              <div className="signal-grid">
+                {availableSignals.map((signal) => (
+                  <button
+                    key={signal}
+                    className={
+                      form.detectedSignals.includes(signal)
+                        ? "signal-chip active"
+                        : "signal-chip"
+                    }
+                    onClick={() => toggleSignal(signal)}
+                  >
+                    {signal.replaceAll("_", " ")}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button className="secondary-action" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </button>
+
+              <button
+                className="primary-action"
+                onClick={createIncident}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Creating..." : "Create Incident"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedCase && (
+        <div
+          className="detail-backdrop"
+          onClick={() => setSelectedCase(null)}
+        >
+          <div
+            className="detail-drawer"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">Incident Detail</p>
+                <h2>{selectedCase.subject}</h2>
+              </div>
+
+              <button
+                className="icon-button"
+                onClick={() => setSelectedCase(null)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="detail-grid">
+              <div className="detail-card">
+                <span>Source</span>
+                <strong>{selectedCase.source}</strong>
+              </div>
+
+              <div className="detail-card">
+                <span>Channel</span>
+                <strong>{selectedCase.channel}</strong>
+              </div>
+
+              <div className="detail-card">
+                <span>Risk Score</span>
+                <strong>{selectedCase.riskScore}</strong>
+              </div>
+
+              <div className="detail-card">
+                <span>Severity</span>
+                <strong>{selectedCase.classification}</strong>
+              </div>
+            </div>
+
+            <div className="analysis-box">
+              <h3>Recommended Response</h3>
+
+              {selectedCase.classification === "Critical" && (
+                <p>
+                  Immediate containment recommended. Freeze workflow, escalate to fraud operations and validate identity manually.
+                </p>
+              )}
+
+              {selectedCase.classification === "High" && (
+                <p>
+                  Strong anomaly indicators detected. Require step-up authentication and analyst review.
+                </p>
+              )}
+
+              {selectedCase.classification === "Medium" && (
+                <p>
+                  Moderate anomaly pattern. Request secondary verification and monitor recurrence.
+                </p>
+              )}
+
+              {selectedCase.classification === "Low" && (
+                <p>
+                  Low confidence anomaly. Passive monitoring recommended.
+                </p>
+              )}
+            </div>
+
+            <div className="detail-footer">
+              <span>ID: {selectedCase.id}</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
+
+export default App;

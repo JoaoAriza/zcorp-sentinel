@@ -1,27 +1,31 @@
-using Confluent.Kafka;
 using IdentityDefense.Application.Commands;
 using IdentityDefense.Application.Interfaces;
 using IdentityDefense.Infrastructure.Messaging;
+using IdentityDefense.Infrastructure.Repositories;
+using IdentityDefense.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+const string CorsPolicy = "FrontendPolicy";
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<CreateIdentityRiskCaseHandler>();
-
-builder.Services.AddSingleton<IProducer<Null, string>>(_ =>
+builder.Services.AddCors(options =>
 {
-    var config = new ProducerConfig
+    options.AddPolicy(CorsPolicy, policy =>
     {
-        BootstrapServers = "localhost:9092"
-    };
-
-    return new ProducerBuilder<Null, string>(config).Build();
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 
-builder.Services.AddScoped<IIdentityRiskPublisher, KafkaIdentityRiskPublisher>();
+builder.Services.AddScoped<CreateIdentityRiskCaseHandler>();
+builder.Services.AddScoped<IIdentityRiskPublisher, FakeIdentityRiskPublisher>();
+builder.Services.AddSingleton<IIdentityRiskCaseRepository, InMemoryIdentityRiskCaseRepository>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 var app = builder.Build();
 
@@ -31,6 +35,20 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(CorsPolicy);
+
+app.MapGet("/", () => Results.Ok(new
+{
+    name = "Identity Defense API",
+    status = "running"
+}));
+
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy"
+}));
+
 app.MapControllers();
 
 app.Run();

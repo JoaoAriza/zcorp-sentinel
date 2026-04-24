@@ -6,10 +6,14 @@ namespace IdentityDefense.Application.Commands;
 public class CreateIdentityRiskCaseHandler
 {
     private readonly IIdentityRiskPublisher _publisher;
+    private readonly IIdentityRiskCaseRepository _repository;
 
-    public CreateIdentityRiskCaseHandler(IIdentityRiskPublisher publisher)
+    public CreateIdentityRiskCaseHandler(
+        IIdentityRiskPublisher publisher,
+        IIdentityRiskCaseRepository repository)
     {
         _publisher = publisher;
+        _repository = repository;
     }
 
     public async Task<IdentityRiskCase> Handle(CreateIdentityRiskCaseCommand command)
@@ -21,6 +25,7 @@ public class CreateIdentityRiskCaseHandler
             command.DetectedSignals
         );
 
+        await _repository.AddAsync(riskCase);
         await _publisher.PublishAsync(riskCase);
 
         return riskCase;

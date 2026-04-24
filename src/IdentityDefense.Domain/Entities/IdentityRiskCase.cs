@@ -3,12 +3,12 @@ namespace IdentityDefense.Domain.Entities;
 public class IdentityRiskCase
 {
     public Guid Id { get; private set; }
-    public string Source { get; private set; }
-    public string Channel { get; private set; }
-    public string Subject { get; private set; }
-    public List<string> DetectedSignals { get; private set; }
+    public string Source { get; private set; } = string.Empty;
+    public string Channel { get; private set; } = string.Empty;
+    public string Subject { get; private set; } = string.Empty;
+    public List<string> DetectedSignals { get; private set; } = new();
     public int RiskScore { get; private set; }
-    public string Classification { get; private set; }
+    public string Classification { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
 
     public IdentityRiskCase(
