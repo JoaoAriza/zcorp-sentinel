@@ -11,6 +11,10 @@ public class IdentityRiskCase
     public string Classification { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
 
+    private IdentityRiskCase()
+    {
+    }
+
     public IdentityRiskCase(
         string source,
         string channel,

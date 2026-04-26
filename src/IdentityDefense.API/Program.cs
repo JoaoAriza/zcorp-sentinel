@@ -3,6 +3,8 @@ using IdentityDefense.Application.Interfaces;
 using IdentityDefense.Infrastructure.Messaging;
 using IdentityDefense.Infrastructure.Repositories;
 using IdentityDefense.Infrastructure.Services;
+using IdentityDefense.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 const string CorsPolicy = "FrontendPolicy";
@@ -10,6 +12,11 @@ const string CorsPolicy = "FrontendPolicy";
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<IdentityDefenseDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
+});
 
 builder.Services.AddCors(options =>
 {
@@ -24,7 +31,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<CreateIdentityRiskCaseHandler>();
 builder.Services.AddScoped<IIdentityRiskPublisher, FakeIdentityRiskPublisher>();
-builder.Services.AddSingleton<IIdentityRiskCaseRepository, InMemoryIdentityRiskCaseRepository>();
+builder.Services.AddScoped<IIdentityRiskCaseRepository, PostgresIdentityRiskCaseRepository>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 var app = builder.Build();
