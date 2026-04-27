@@ -10,40 +10,38 @@ public class IdentityDefenseDbContext : DbContext
 	{
 	}
 
-	public DbSet<IdentityRiskCase> IdentityRiskCases => Set<IdentityRiskCase>();
+    public DbSet<User> Users => Set<User>();
+
+    public DbSet<IdentityRiskCase> IdentityRiskCases => Set<IdentityRiskCase>();
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		modelBuilder.Entity<IdentityRiskCase>(entity =>
-		{
-			entity.ToTable("identity_risk_cases");
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("users");
 
-			entity.HasKey(x => x.Id);
+            entity.HasKey(x => x.Id);
 
-			entity.Property(x => x.Source)
-				.IsRequired()
-				.HasMaxLength(120);
+            entity.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(120);
 
-			entity.Property(x => x.Channel)
-				.IsRequired()
-				.HasMaxLength(40);
+            entity.Property(x => x.Email)
+                .IsRequired()
+                .HasMaxLength(180);
 
-			entity.Property(x => x.Subject)
-				.IsRequired()
-				.HasMaxLength(240);
+            entity.HasIndex(x => x.Email)
+                .IsUnique();
 
-			entity.Property(x => x.RiskScore)
-				.IsRequired();
+            entity.Property(x => x.PasswordHash)
+                .IsRequired();
 
-			entity.Property(x => x.Classification)
-				.IsRequired()
-				.HasMaxLength(40);
+            entity.Property(x => x.Role)
+                .IsRequired()
+                .HasMaxLength(40);
 
-			entity.Property(x => x.CreatedAt)
-				.IsRequired();
-
-			entity.Property(x => x.DetectedSignals)
-				.HasColumnType("text[]");
-		});
-	}
+            entity.Property(x => x.CreatedAt)
+                .IsRequired();
+        });
+    }
 }
