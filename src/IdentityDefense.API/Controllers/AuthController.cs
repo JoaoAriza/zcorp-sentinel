@@ -2,6 +2,8 @@ using IdentityDefense.Application.DTOs.Auth;
 using IdentityDefense.Application.Interfaces;
 using IdentityDefense.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IdentityDefense.API.Controllers;
 
@@ -75,5 +77,23 @@ public class AuthController : ControllerBase
             user.Role,
             token
         ));
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var name = User.FindFirst(ClaimTypes.Name)?.Value;
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        return Ok(new
+        {
+            userId,
+            name,
+            email,
+            role
+        });
     }
 }

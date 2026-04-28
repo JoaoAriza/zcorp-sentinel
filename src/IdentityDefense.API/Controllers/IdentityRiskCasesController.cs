@@ -1,6 +1,7 @@
 using IdentityDefense.Application.Commands;
 using IdentityDefense.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IdentityDefense.API.Controllers;
 
@@ -19,6 +20,7 @@ public class IdentityRiskCasesController : ControllerBase
         _repository = repository;
     }
 
+    [Authorize(Roles = "Admin,Analyst")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateIdentityRiskCaseCommand command)
     {
@@ -26,6 +28,7 @@ public class IdentityRiskCasesController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
+    [Authorize(Roles = "Admin,Analyst,Viewer")]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -33,6 +36,7 @@ public class IdentityRiskCasesController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin,Analyst,Viewer")]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
