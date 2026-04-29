@@ -7,6 +7,7 @@ import {
   UserCheck,
   Plus,
   X,
+  LogOut,
 } from "lucide-react";
 import {
   PieChart,
@@ -21,6 +22,13 @@ import {
 } from "recharts";
 import { api } from "./services/api";
 import "./App.css";
+
+type User = {
+  userId: string;
+  name: string;
+  email: string;
+  role: string;
+};
 
 type RecentRiskCase = {
   id: string;
@@ -41,6 +49,11 @@ type DashboardSummary = {
   averageRiskScore: number;
   casesByChannel: Record<string, number>;
   recentCases: RecentRiskCase[];
+};
+
+type LoginForm = {
+  email: string;
+  password: string;
 };
 
 type NewIncidentForm = {
@@ -67,16 +80,65 @@ const initialForm: NewIncidentForm = {
 };
 
 function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loginForm, setLoginForm] = useState<LoginForm>({
+    email: "joao@zcorp.dev",
+    password: "Sentinel@123",
+  });
+
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCase, setSelectedCase] = useState<RecentRiskCase | null>(null);
   const [form, setForm] = useState<NewIncidentForm>(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState("all");
   const [severityFilter, setSeverityFilter] = useState("all");
-  const [selectedCase, setSelectedCase] = useState<RecentRiskCase | null>(null);
   const [lastTotalCases, setLastTotalCases] = useState<number | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
+  const [authError, setAuthError] = useState("");
+
+  async function login() {
+    try {
+      setAuthError("");
+
+      const response = await api.post("/auth/login", loginForm);
+
+      localStorage.setItem("zcorp_token", response.data.token);
+
+      setUser({
+        userId: response.data.userId,
+        name: response.data.name,
+        email: response.data.email,
+        role: response.data.role,
+      });
+
+      await loadDashboard();
+    } catch {
+      setAuthError("Invalid credentials or unavailable API.");
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("zcorp_token");
+    setUser(null);
+    setSummary(null);
+  }
+
+  async function loadMe() {
+    const token = localStorage.getItem("zcorp_token");
+
+    if (!token) return;
+
+    try {
+      const response = await api.get<User>("/auth/me");
+      setUser(response.data);
+      await loadDashboard();
+    } catch {
+      localStorage.removeItem("zcorp_token");
+      setUser(null);
+    }
+  }
 
   async function loadDashboard(showNotification = false) {
     const response = await api.get<DashboardSummary>("/dashboard/summary");
@@ -127,7 +189,11 @@ function App() {
   }
 
   useEffect(() => {
-    loadDashboard();
+    loadMe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
 
     const intervalId = window.setInterval(() => {
       loadDashboard(true);
@@ -136,7 +202,46 @@ function App() {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, []);
+  }, [user]);
+
+  if (!user) {
+    return (
+      <main className="login-page">
+        <section className="login-card">
+          <p className="eyebrow">ZCorp Sentinel Authenticity</p>
+          <h1>Secure Access</h1>
+          <p className="subtitle">
+            Authenticate to access the deepfake and impersonation defense command center.
+          </p>
+
+          <div className="login-form">
+            <input
+              value={loginForm.email}
+              placeholder="Email"
+              onChange={(event) =>
+                setLoginForm({ ...loginForm, email: event.target.value })
+              }
+            />
+
+            <input
+              value={loginForm.password}
+              type="password"
+              placeholder="Password"
+              onChange={(event) =>
+                setLoginForm({ ...loginForm, password: event.target.value })
+              }
+            />
+
+            {authError && <div className="auth-error">{authError}</div>}
+
+            <button className="primary-action" onClick={login}>
+              Sign in
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   if (!summary) {
     return <div className="loading">Loading Sentinel dashboard...</div>;
@@ -198,6 +303,7 @@ function App() {
           <span>{notification}</span>
         </div>
       )}
+
       <section className="hero">
         <div>
           <p className="eyebrow">ZCorp Sentinel Authenticity</p>
@@ -215,8 +321,13 @@ function App() {
 
           <div className="status-card">
             <div className="status-pulse" />
-            <span>System online</span>
+            <span>{user.name} · {user.role}</span>
           </div>
+
+          <button className="secondary-action" onClick={logout}>
+            <LogOut size={16} />
+            Logout
+          </button>
         </div>
       </section>
 
@@ -311,12 +422,7 @@ function App() {
                   itemStyle={{ color: "#e5eefb" }}
                   labelStyle={{ color: "#93c5fd" }}
                 />
-                <Bar
-                  dataKey="value"
-                  radius={[12, 12, 4, 4]}
-                  animationDuration={500}
-                  activeBar={false}
-                >
+                <Bar dataKey="value" radius={[12, 12, 4, 4]} animationDuration={500} activeBar={false}>
                   {channelData.map((entry) => (
                     <Cell key={entry.name} fill={channelColors[entry.name] ?? "#38bdf8"} />
                   ))}
@@ -340,10 +446,7 @@ function App() {
             onChange={(event) => setSearch(event.target.value)}
           />
 
-          <select
-            value={channelFilter}
-            onChange={(event) => setChannelFilter(event.target.value)}
-          >
+          <select value={channelFilter} onChange={(event) => setChannelFilter(event.target.value)}>
             <option value="all">All channels</option>
             <option value="voice">Voice</option>
             <option value="video">Video</option>
@@ -351,10 +454,7 @@ function App() {
             <option value="email">Email</option>
           </select>
 
-          <select
-            value={severityFilter}
-            onChange={(event) => setSeverityFilter(event.target.value)}
-          >
+          <select value={severityFilter} onChange={(event) => setSeverityFilter(event.target.value)}>
             <option value="all">All severities</option>
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
@@ -365,9 +465,11 @@ function App() {
 
         <div className="case-list">
           {filteredCases.map((riskCase) => (
-            <div className="case-row clickable animated-row"
+            <div
+              className="case-row clickable animated-row"
               key={riskCase.id}
-              onClick={() => setSelectedCase(riskCase)}>
+              onClick={() => setSelectedCase(riskCase)}
+            >
               <div className="case-icon">
                 <UserCheck size={20} />
               </div>
@@ -384,6 +486,7 @@ function App() {
               <div className="score">{riskCase.riskScore}</div>
             </div>
           ))}
+
           {filteredCases.length === 0 && (
             <div className="empty-state">
               No incidents found for the selected filters.
@@ -412,9 +515,7 @@ function App() {
                 <input
                   value={form.source}
                   placeholder="mobile-banking"
-                  onChange={(event) =>
-                    setForm({ ...form, source: event.target.value })
-                  }
+                  onChange={(event) => setForm({ ...form, source: event.target.value })}
                 />
               </label>
 
@@ -422,9 +523,7 @@ function App() {
                 Channel
                 <select
                   value={form.channel}
-                  onChange={(event) =>
-                    setForm({ ...form, channel: event.target.value })
-                  }
+                  onChange={(event) => setForm({ ...form, channel: event.target.value })}
                 >
                   <option value="voice">Voice</option>
                   <option value="video">Video</option>
@@ -438,9 +537,7 @@ function App() {
                 <input
                   value={form.subject}
                   placeholder="CEO approval call"
-                  onChange={(event) =>
-                    setForm({ ...form, subject: event.target.value })
-                  }
+                  onChange={(event) => setForm({ ...form, subject: event.target.value })}
                 />
               </label>
             </div>
@@ -470,11 +567,7 @@ function App() {
                 Cancel
               </button>
 
-              <button
-                className="primary-action"
-                onClick={createIncident}
-                disabled={isSubmitting}
-              >
+              <button className="primary-action" onClick={createIncident} disabled={isSubmitting}>
                 {isSubmitting ? "Creating..." : "Create Incident"}
               </button>
             </div>
@@ -483,24 +576,15 @@ function App() {
       )}
 
       {selectedCase && (
-        <div
-          className="detail-backdrop"
-          onClick={() => setSelectedCase(null)}
-        >
-          <div
-            className="detail-drawer"
-            onClick={(event) => event.stopPropagation()}
-          >
+        <div className="detail-backdrop" onClick={() => setSelectedCase(null)}>
+          <div className="detail-drawer" onClick={(event) => event.stopPropagation()}>
             <div className="modal-header">
               <div>
                 <p className="eyebrow">Incident Detail</p>
                 <h2>{selectedCase.subject}</h2>
               </div>
 
-              <button
-                className="icon-button"
-                onClick={() => setSelectedCase(null)}
-              >
+              <button className="icon-button" onClick={() => setSelectedCase(null)}>
                 <X size={20} />
               </button>
             </div>
@@ -531,27 +615,19 @@ function App() {
               <h3>Recommended Response</h3>
 
               {selectedCase.classification === "Critical" && (
-                <p>
-                  Immediate containment recommended. Freeze workflow, escalate to fraud operations and validate identity manually.
-                </p>
+                <p>Immediate containment recommended. Freeze workflow, escalate to fraud operations and validate identity manually.</p>
               )}
 
               {selectedCase.classification === "High" && (
-                <p>
-                  Strong anomaly indicators detected. Require step-up authentication and analyst review.
-                </p>
+                <p>Strong anomaly indicators detected. Require step-up authentication and analyst review.</p>
               )}
 
               {selectedCase.classification === "Medium" && (
-                <p>
-                  Moderate anomaly pattern. Request secondary verification and monitor recurrence.
-                </p>
+                <p>Moderate anomaly pattern. Request secondary verification and monitor recurrence.</p>
               )}
 
               {selectedCase.classification === "Low" && (
-                <p>
-                  Low confidence anomaly. Passive monitoring recommended.
-                </p>
+                <p>Low confidence anomaly. Passive monitoring recommended.</p>
               )}
             </div>
 
