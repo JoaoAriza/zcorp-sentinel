@@ -17,7 +17,9 @@ public class IdentityRiskCaseTests
             "mobile-banking",
             "voice",
             "CEO approval call",
-            signals
+            signals,
+            75,
+            "High"
         );
 
         Assert.Equal("High", riskCase.Classification);

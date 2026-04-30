@@ -21,6 +21,7 @@ import {
   Tooltip,
 } from "recharts";
 import { api } from "./services/api";
+import { createIncidentConnection } from "./services/realtime";
 import "./App.css";
 
 type User = {
@@ -80,7 +81,9 @@ const initialForm: NewIncidentForm = {
 };
 
 function App() {
+  const [authLoading, setAuthLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+
   const [loginForm, setLoginForm] = useState<LoginForm>({
     email: "joao@zcorp.dev",
     password: "Sentinel@123",
@@ -91,12 +94,61 @@ function App() {
   const [selectedCase, setSelectedCase] = useState<RecentRiskCase | null>(null);
   const [form, setForm] = useState<NewIncidentForm>(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState("all");
   const [severityFilter, setSeverityFilter] = useState("all");
+
   const [lastTotalCases, setLastTotalCases] = useState<number | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [authError, setAuthError] = useState("");
+
+  async function loadDashboard(showNotification = false) {
+    const response = await api.get<DashboardSummary>("/dashboard/summary");
+    const nextSummary = response.data;
+
+    setSummary((currentSummary) => {
+      const previousTotal = currentSummary?.totalCases ?? lastTotalCases;
+
+      if (
+        showNotification &&
+        previousTotal !== null &&
+        nextSummary.totalCases > previousTotal
+      ) {
+        setNotification("New identity risk incident detected");
+
+        setTimeout(() => {
+          setNotification(null);
+        }, 3200);
+      }
+
+      return nextSummary;
+    });
+
+    setLastTotalCases(nextSummary.totalCases);
+  }
+
+  async function loadMe() {
+    const token = localStorage.getItem("zcorp_token");
+
+    if (!token) {
+      setAuthLoading(false);
+      return;
+    }
+
+    try {
+      const response = await api.get<User>("/auth/me");
+      setUser(response.data);
+      await loadDashboard();
+    } catch {
+      localStorage.removeItem("zcorp_token");
+      localStorage.removeItem("zcorp_refresh_token");
+      setUser(null);
+      setSummary(null);
+    } finally {
+      setAuthLoading(false);
+    }
+  }
 
   async function login() {
     try {
@@ -127,59 +179,20 @@ function App() {
     setSummary(null);
   }
 
-  async function loadMe() {
-    const token = localStorage.getItem("zcorp_token");
-
-    if (!token) return;
-
-    try {
-      const response = await api.get<User>("/auth/me");
-      setUser(response.data);
-      await loadDashboard();
-    } catch {
-      localStorage.removeItem("zcorp_token");
-      localStorage.removeItem("zcorp_refresh_token");
-      setUser(null);
-    }
-  }
-
-  async function loadDashboard(showNotification = false) {
-    const response = await api.get<DashboardSummary>("/dashboard/summary");
-    const nextSummary = response.data;
-
-    setSummary((currentSummary) => {
-      const previousTotal = currentSummary?.totalCases ?? lastTotalCases;
-
-      if (
-        showNotification &&
-        previousTotal !== null &&
-        nextSummary.totalCases > previousTotal
-      ) {
-        setNotification("New identity risk incident detected");
-
-        setTimeout(() => {
-          setNotification(null);
-        }, 3200);
-      }
-
-      return nextSummary;
-    });
-
-    setLastTotalCases(nextSummary.totalCases);
-  }
-
   async function createIncident() {
     if (!form.source.trim() || !form.subject.trim()) return;
 
     setIsSubmitting(true);
 
-    await api.post("/identity-risk-cases", form);
+    try {
+      await api.post("/identity-risk-cases", form);
 
-    setForm(initialForm);
-    setIsModalOpen(false);
-    await loadDashboard();
-
-    setIsSubmitting(false);
+      setForm(initialForm);
+      setIsModalOpen(false);
+      await loadDashboard();
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function toggleSignal(signal: string) {
@@ -206,6 +219,31 @@ function App() {
       window.clearInterval(intervalId);
     };
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const connection = createIncidentConnection(async () => {
+      setNotification("Real-time incident received");
+      await loadDashboard();
+
+      setTimeout(() => {
+        setNotification(null);
+      }, 3200);
+    });
+
+    connection.start().catch(() => {
+      console.error("SignalR connection failed.");
+    });
+
+    return () => {
+      connection.stop();
+    };
+  }, [user]);
+
+  if (authLoading) {
+    return <div className="loading">Checking secure session...</div>;
+  }
 
   if (!user) {
     return (
@@ -384,7 +422,10 @@ function App() {
                   {severityData
                     .filter((item) => item.value > 0)
                     .map((entry) => (
-                      <Cell key={entry.name} fill={severityColors[entry.name] ?? "#38bdf8"} />
+                      <Cell
+                        key={entry.name}
+                        fill={severityColors[entry.name] ?? "#38bdf8"}
+                      />
                     ))}
                 </Pie>
                 <Tooltip
@@ -406,7 +447,11 @@ function App() {
 
           <div className="chart-block" onMouseDown={(event) => event.preventDefault()}>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={channelData} barCategoryGap="32%" accessibilityLayer={false}>
+              <BarChart
+                data={channelData}
+                barCategoryGap="32%"
+                accessibilityLayer={false}
+              >
                 <XAxis
                   dataKey="name"
                   axisLine={{ stroke: "rgba(148, 163, 184, 0.22)" }}
@@ -425,9 +470,17 @@ function App() {
                   itemStyle={{ color: "#e5eefb" }}
                   labelStyle={{ color: "#93c5fd" }}
                 />
-                <Bar dataKey="value" radius={[12, 12, 4, 4]} animationDuration={500} activeBar={false}>
+                <Bar
+                  dataKey="value"
+                  radius={[12, 12, 4, 4]}
+                  animationDuration={500}
+                  activeBar={false}
+                >
                   {channelData.map((entry) => (
-                    <Cell key={entry.name} fill={channelColors[entry.name] ?? "#38bdf8"} />
+                    <Cell
+                      key={entry.name}
+                      fill={channelColors[entry.name] ?? "#38bdf8"}
+                    />
                   ))}
                 </Bar>
               </BarChart>
@@ -449,7 +502,10 @@ function App() {
             onChange={(event) => setSearch(event.target.value)}
           />
 
-          <select value={channelFilter} onChange={(event) => setChannelFilter(event.target.value)}>
+          <select
+            value={channelFilter}
+            onChange={(event) => setChannelFilter(event.target.value)}
+          >
             <option value="all">All channels</option>
             <option value="voice">Voice</option>
             <option value="video">Video</option>
@@ -457,7 +513,10 @@ function App() {
             <option value="email">Email</option>
           </select>
 
-          <select value={severityFilter} onChange={(event) => setSeverityFilter(event.target.value)}>
+          <select
+            value={severityFilter}
+            onChange={(event) => setSeverityFilter(event.target.value)}
+          >
             <option value="all">All severities</option>
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
@@ -518,7 +577,9 @@ function App() {
                 <input
                   value={form.source}
                   placeholder="mobile-banking"
-                  onChange={(event) => setForm({ ...form, source: event.target.value })}
+                  onChange={(event) =>
+                    setForm({ ...form, source: event.target.value })
+                  }
                 />
               </label>
 
@@ -526,7 +587,9 @@ function App() {
                 Channel
                 <select
                   value={form.channel}
-                  onChange={(event) => setForm({ ...form, channel: event.target.value })}
+                  onChange={(event) =>
+                    setForm({ ...form, channel: event.target.value })
+                  }
                 >
                   <option value="voice">Voice</option>
                   <option value="video">Video</option>
@@ -540,7 +603,9 @@ function App() {
                 <input
                   value={form.subject}
                   placeholder="CEO approval call"
-                  onChange={(event) => setForm({ ...form, subject: event.target.value })}
+                  onChange={(event) =>
+                    setForm({ ...form, subject: event.target.value })
+                  }
                 />
               </label>
             </div>
@@ -570,7 +635,11 @@ function App() {
                 Cancel
               </button>
 
-              <button className="primary-action" onClick={createIncident} disabled={isSubmitting}>
+              <button
+                className="primary-action"
+                onClick={createIncident}
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? "Creating..." : "Create Incident"}
               </button>
             </div>
@@ -618,19 +687,27 @@ function App() {
               <h3>Recommended Response</h3>
 
               {selectedCase.classification === "Critical" && (
-                <p>Immediate containment recommended. Freeze workflow, escalate to fraud operations and validate identity manually.</p>
+                <p>
+                  Immediate containment recommended. Freeze workflow, escalate to fraud operations and validate identity manually.
+                </p>
               )}
 
               {selectedCase.classification === "High" && (
-                <p>Strong anomaly indicators detected. Require step-up authentication and analyst review.</p>
+                <p>
+                  Strong anomaly indicators detected. Require step-up authentication and analyst review.
+                </p>
               )}
 
               {selectedCase.classification === "Medium" && (
-                <p>Moderate anomaly pattern. Request secondary verification and monitor recurrence.</p>
+                <p>
+                  Moderate anomaly pattern. Request secondary verification and monitor recurrence.
+                </p>
               )}
 
               {selectedCase.classification === "Low" && (
-                <p>Low confidence anomaly. Passive monitoring recommended.</p>
+                <p>
+                  Low confidence anomaly. Passive monitoring recommended.
+                </p>
               )}
             </div>
 

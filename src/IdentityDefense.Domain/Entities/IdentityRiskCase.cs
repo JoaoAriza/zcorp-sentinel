@@ -19,17 +19,20 @@ public class IdentityRiskCase
         string source,
         string channel,
         string subject,
-        List<string> detectedSignals)
+        List<string> detectedSignals,
+        int riskScore,
+        string classification)
     {
         Id = Guid.NewGuid();
         Source = source;
         Channel = channel;
         Subject = subject;
         DetectedSignals = detectedSignals ?? new List<string>();
+        RiskScore = Math.Clamp(riskScore, 0, 100);
+        Classification = classification;
         CreatedAt = DateTime.UtcNow;
 
         Validate();
-        CalculateRisk();
     }
 
     private void Validate()
@@ -42,34 +45,11 @@ public class IdentityRiskCase
 
         if (string.IsNullOrWhiteSpace(Subject))
             throw new ArgumentException("Subject is required.");
-    }
 
-    private void CalculateRisk()
-    {
-        var score = 0;
+        if (string.IsNullOrWhiteSpace(Classification))
+            throw new ArgumentException("Classification is required.");
 
-        foreach (var signal in DetectedSignals)
-        {
-            score += signal.ToLower() switch
-            {
-                "voice_clone" => 30,
-                "face_mismatch" => 25,
-                "executive_impersonation" => 35,
-                "synthetic_identity" => 40,
-                "behavior_anomaly" => 20,
-                "urgent_language" => 10,
-                _ => 5
-            };
-        }
-
-        RiskScore = Math.Min(score, 100);
-
-        Classification = RiskScore switch
-        {
-            <= 20 => "Low",
-            <= 50 => "Medium",
-            <= 80 => "High",
-            _ => "Critical"
-        };
+        if (Classification is not "Low" and not "Medium" and not "High" and not "Critical")
+            throw new ArgumentException("Invalid classification.");
     }
 }

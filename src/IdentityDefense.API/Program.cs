@@ -9,11 +9,16 @@ using System.Text;
 using IdentityDefense.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using IdentityDefense.API.Hubs;
+using IdentityDefense.API.Services;
+using IdentityDefense.Application.Services;
+using IdentityDefense.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 const string CorsPolicy = "FrontendPolicy";
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
@@ -54,7 +59,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -66,6 +72,8 @@ builder.Services.AddScoped<IUserRepository, PostgresUserRepository>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IRefreshTokenRepository, PostgresRefreshTokenRepository>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<IIncidentRealtimeNotifier, SignalRIncidentRealtimeNotifier>();
+builder.Services.AddScoped<IIdentityRiskScoringService, IdentityRiskScoringService>();
 
 var app = builder.Build();
 
@@ -93,5 +101,6 @@ app.MapGet("/health", () => Results.Ok(new
 }));
 
 app.MapControllers();
+app.MapHub<IncidentHub>("/hubs/incidents");
 
 app.Run();
