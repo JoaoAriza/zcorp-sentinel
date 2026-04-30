@@ -12,7 +12,6 @@ using Microsoft.IdentityModel.Tokens;
 using IdentityDefense.API.Hubs;
 using IdentityDefense.API.Services;
 using IdentityDefense.Application.Services;
-using IdentityDefense.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 const string CorsPolicy = "FrontendPolicy";
@@ -74,6 +73,7 @@ builder.Services.AddScoped<IRefreshTokenRepository, PostgresRefreshTokenReposito
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IIncidentRealtimeNotifier, SignalRIncidentRealtimeNotifier>();
 builder.Services.AddScoped<IIdentityRiskScoringService, IdentityRiskScoringService>();
+builder.Services.AddScoped<IAuditService, AuditService>();
 
 var app = builder.Build();
 

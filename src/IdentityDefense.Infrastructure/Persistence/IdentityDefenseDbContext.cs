@@ -16,6 +16,8 @@ public class IdentityDefenseDbContext : DbContext
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
         modelBuilder.Entity<User>(entity =>
@@ -71,5 +73,36 @@ public class IdentityDefenseDbContext : DbContext
 
             entity.Property(x => x.ReplacedByToken);
         });
+
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.ToTable("audit_logs");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Action)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Resource)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.UserEmail)
+                .HasMaxLength(180);
+
+            entity.Property(x => x.ResourceId)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.IpAddress)
+                .HasMaxLength(50);
+
+            entity.Property(x => x.UserAgent)
+                .HasMaxLength(300);
+
+            entity.Property(x => x.CreatedAt)
+                .IsRequired();
+        });
+
     }
 }
