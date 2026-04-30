@@ -105,6 +105,7 @@ function App() {
       const response = await api.post("/auth/login", loginForm);
 
       localStorage.setItem("zcorp_token", response.data.token);
+      localStorage.setItem("zcorp_refresh_token", response.data.refreshToken);
 
       setUser({
         userId: response.data.userId,
@@ -121,6 +122,7 @@ function App() {
 
   function logout() {
     localStorage.removeItem("zcorp_token");
+    localStorage.removeItem("zcorp_refresh_token");
     setUser(null);
     setSummary(null);
   }
@@ -136,6 +138,7 @@ function App() {
       await loadDashboard();
     } catch {
       localStorage.removeItem("zcorp_token");
+      localStorage.removeItem("zcorp_refresh_token");
       setUser(null);
     }
   }
