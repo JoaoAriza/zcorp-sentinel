@@ -14,7 +14,9 @@ public class IdentityDefenseDbContext : DbContext
 
     public DbSet<IdentityRiskCase> IdentityRiskCases => Set<IdentityRiskCase>();
 
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
         modelBuilder.Entity<User>(entity =>
         {
@@ -42,6 +44,32 @@ public class IdentityDefenseDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .IsRequired();
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable("refresh_tokens");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.UserId)
+                .IsRequired();
+
+            entity.Property(x => x.Token)
+                .IsRequired();
+
+            entity.HasIndex(x => x.Token)
+                .IsUnique();
+
+            entity.Property(x => x.ExpiresAt)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .IsRequired();
+
+            entity.Property(x => x.RevokedAt);
+
+            entity.Property(x => x.ReplacedByToken);
         });
     }
 }

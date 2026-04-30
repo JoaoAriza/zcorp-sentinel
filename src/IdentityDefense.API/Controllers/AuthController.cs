@@ -1,9 +1,9 @@
+using System.Security.Claims;
 using IdentityDefense.Application.DTOs.Auth;
 using IdentityDefense.Application.Interfaces;
 using IdentityDefense.Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityDefense.API.Controllers;
 
@@ -12,14 +12,20 @@ namespace IdentityDefense.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IUserRepository _users;
+    private readonly IRefreshTokenRepository _refreshTokens;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly IRefreshTokenService _refreshTokenService;
 
     public AuthController(
         IUserRepository users,
-        IJwtTokenService jwtTokenService)
+        IRefreshTokenRepository refreshTokens,
+        IJwtTokenService jwtTokenService,
+        IRefreshTokenService refreshTokenService)
     {
         _users = users;
+        _refreshTokens = refreshTokens;
         _jwtTokenService = jwtTokenService;
+        _refreshTokenService = refreshTokenService;
     }
 
     [HttpPost("register")]
@@ -41,14 +47,24 @@ public class AuthController : ControllerBase
 
         await _users.AddAsync(user);
 
-        var token = _jwtTokenService.Generate(user);
+        var accessToken = _jwtTokenService.Generate(user);
+        var refreshTokenValue = _refreshTokenService.Generate();
+
+        var refreshToken = new RefreshToken(
+            user.Id,
+            refreshTokenValue,
+            DateTime.UtcNow.AddDays(14)
+        );
+
+        await _refreshTokens.AddAsync(refreshToken);
 
         return Created("", new AuthResponse(
             user.Id,
             user.Name,
             user.Email,
             user.Role,
-            token
+            accessToken,
+            refreshTokenValue
         ));
     }
 
@@ -68,14 +84,61 @@ public class AuthController : ControllerBase
         if (!validPassword)
             return Unauthorized(new { message = "Invalid credentials." });
 
-        var token = _jwtTokenService.Generate(user);
+        var accessToken = _jwtTokenService.Generate(user);
+        var refreshTokenValue = _refreshTokenService.Generate();
+
+        var refreshToken = new RefreshToken(
+            user.Id,
+            refreshTokenValue,
+            DateTime.UtcNow.AddDays(14)
+        );
+
+        await _refreshTokens.AddAsync(refreshToken);
 
         return Ok(new AuthResponse(
             user.Id,
             user.Name,
             user.Email,
             user.Role,
-            token
+            accessToken,
+            refreshTokenValue
+        ));
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
+    {
+        var existingRefreshToken = await _refreshTokens.GetByTokenAsync(request.RefreshToken);
+
+        if (existingRefreshToken is null || !existingRefreshToken.IsActive)
+            return Unauthorized(new { message = "Invalid refresh token." });
+
+        var user = await _users.GetByIdAsync(existingRefreshToken.UserId);
+
+        if (user is null)
+            return Unauthorized(new { message = "User not found." });
+
+        var newAccessToken = _jwtTokenService.Generate(user);
+        var newRefreshTokenValue = _refreshTokenService.Generate();
+
+        existingRefreshToken.Revoke(newRefreshTokenValue);
+        await _refreshTokens.UpdateAsync(existingRefreshToken);
+
+        var newRefreshToken = new RefreshToken(
+            user.Id,
+            newRefreshTokenValue,
+            DateTime.UtcNow.AddDays(14)
+        );
+
+        await _refreshTokens.AddAsync(newRefreshToken);
+
+        return Ok(new AuthResponse(
+            user.Id,
+            user.Name,
+            user.Email,
+            user.Role,
+            newAccessToken,
+            newRefreshTokenValue
         ));
     }
 
