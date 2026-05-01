@@ -4,4 +4,5 @@ public class RiskAssessmentResult
 {
     public int Score { get; set; }
     public string Classification { get; set; } = string.Empty;
+    public List<string> Reasons { get; set; } = new();
 }

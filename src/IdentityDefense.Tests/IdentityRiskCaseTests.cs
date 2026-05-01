@@ -13,16 +13,24 @@ public class IdentityRiskCaseTests
             "executive_impersonation"
         };
 
+        var reasons = new List<string>
+        {
+            "Voice clone indicator detected (+30)",
+            "Executive impersonation indicator detected (+35)"
+        };
+
         var riskCase = new IdentityRiskCase(
             "mobile-banking",
             "voice",
             "CEO approval call",
             signals,
             75,
-            "High"
+            "High",
+            reasons
         );
 
         Assert.Equal("High", riskCase.Classification);
-        Assert.True(riskCase.RiskScore > 0);
+        Assert.Equal(75, riskCase.RiskScore);
+        Assert.NotEmpty(riskCase.RiskReasons);
     }
 }

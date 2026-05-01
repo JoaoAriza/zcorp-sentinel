@@ -1,4 +1,4 @@
-using IdentityDefense.Domain.Entities;
+﻿using IdentityDefense.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityDefense.Infrastructure.Persistence;
@@ -17,6 +17,8 @@ public class IdentityDefenseDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
+    public List<string> RiskReasons { get; private set; } = new();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
@@ -99,6 +101,41 @@ public class IdentityDefenseDbContext : DbContext
 
             entity.Property(x => x.UserAgent)
                 .HasMaxLength(300);
+
+            entity.Property(x => x.CreatedAt)
+                .IsRequired();
+        });
+
+        modelBuilder.Entity<IdentityRiskCase>(entity =>
+        {
+            entity.ToTable("identity_risk_cases");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Source)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Channel)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(x => x.Subject)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.Property(x => x.DetectedSignals)
+                .HasColumnType("text[]");
+
+            entity.Property(x => x.RiskScore)
+                .IsRequired();
+
+            entity.Property(x => x.Classification)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(x => x.RiskReasons)
+                .HasColumnType("text[]");
 
             entity.Property(x => x.CreatedAt)
                 .IsRequired();

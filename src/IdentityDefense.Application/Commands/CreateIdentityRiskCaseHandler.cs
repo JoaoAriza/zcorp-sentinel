@@ -37,7 +37,8 @@ public class CreateIdentityRiskCaseHandler
             command.Subject,
             command.DetectedSignals,
             assessment.Score,
-            assessment.Classification
+            assessment.Classification,
+            assessment.Reasons
         );
 
         await _repository.AddAsync(riskCase);

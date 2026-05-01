@@ -10,6 +10,7 @@ public class IdentityRiskCase
     public int RiskScore { get; private set; }
     public string Classification { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
+    public List<string> RiskReasons { get; private set; } = new();
 
     private IdentityRiskCase()
     {
@@ -21,7 +22,8 @@ public class IdentityRiskCase
         string subject,
         List<string> detectedSignals,
         int riskScore,
-        string classification)
+        string classification,
+        List<string> riskReasons)
     {
         Id = Guid.NewGuid();
         Source = source;
@@ -30,6 +32,7 @@ public class IdentityRiskCase
         DetectedSignals = detectedSignals ?? new List<string>();
         RiskScore = Math.Clamp(riskScore, 0, 100);
         Classification = classification;
+        RiskReasons = riskReasons ?? new List<string>();
         CreatedAt = DateTime.UtcNow;
 
         Validate();
