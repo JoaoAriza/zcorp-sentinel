@@ -24,6 +24,8 @@ public class SignalRIncidentRealtimeNotifier : IIncidentRealtimeNotifier
             riskCase.Subject,
             riskCase.RiskScore,
             riskCase.Classification,
+            riskCase.DetectedSignals,
+            riskCase.RiskReasons,
             riskCase.CreatedAt
         });
     }

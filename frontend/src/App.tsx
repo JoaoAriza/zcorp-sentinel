@@ -105,6 +105,57 @@ function App() {
   const [notification, setNotification] = useState<string | null>(null);
   const [authError, setAuthError] = useState("");
 
+  const [openFilter, setOpenFilter] = useState<"channel" | "severity" | null>(null);
+
+  function CustomSelect({
+    value,
+    options,
+    onChange,
+    type,
+  }: {
+    value: string;
+    options: { value: string; label: string }[];
+    onChange: (value: string) => void;
+    type: "channel" | "severity";
+  }) {
+    const selected = options.find((option) => option.value === value);
+
+    return (
+      <div className="custom-select">
+        <button
+          type="button"
+          className="custom-select-trigger"
+          onClick={() => setOpenFilter(openFilter === type ? null : type)}
+        >
+          <span>{selected?.label}</span>
+          <span className="custom-select-chevron">⌄</span>
+        </button>
+
+        {openFilter === type && (
+          <div className="custom-select-menu">
+            {options.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={
+                  option.value === value
+                    ? "custom-select-option active"
+                    : "custom-select-option"
+                }
+                onClick={() => {
+                  onChange(option.value);
+                  setOpenFilter(null);
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   async function loadDashboard(showNotification = false) {
     const response = await api.get<DashboardSummary>("/dashboard/summary");
     const nextSummary = response.data;
@@ -504,27 +555,31 @@ function App() {
             onChange={(event) => setSearch(event.target.value)}
           />
 
-          <select
+          <CustomSelect
             value={channelFilter}
-            onChange={(event) => setChannelFilter(event.target.value)}
-          >
-            <option value="all">All channels</option>
-            <option value="voice">Voice</option>
-            <option value="video">Video</option>
-            <option value="chat">Chat</option>
-            <option value="email">Email</option>
-          </select>
+            type="channel"
+            onChange={setChannelFilter}
+            options={[
+              { value: "all", label: "All channels" },
+              { value: "voice", label: "Voice" },
+              { value: "video", label: "Video" },
+              { value: "chat", label: "Chat" },
+              { value: "email", label: "Email" },
+            ]}
+          />
 
-          <select
+          <CustomSelect
             value={severityFilter}
-            onChange={(event) => setSeverityFilter(event.target.value)}
-          >
-            <option value="all">All severities</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Critical">Critical</option>
-          </select>
+            type="severity"
+            onChange={setSeverityFilter}
+            options={[
+              { value: "all", label: "All severities" },
+              { value: "Low", label: "Low" },
+              { value: "Medium", label: "Medium" },
+              { value: "High", label: "High" },
+              { value: "Critical", label: "Critical" },
+            ]}
+          />
         </div>
 
         <div className="case-list">
