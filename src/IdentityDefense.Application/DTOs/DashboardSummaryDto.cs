@@ -20,5 +20,7 @@ public class RecentRiskCaseDto
     public string Subject { get; set; } = string.Empty;
     public int RiskScore { get; set; }
     public string Classification { get; set; } = string.Empty;
+    public List<string> DetectedSignals { get; set; } = new();
+    public List<string> RiskReasons { get; set; } = new();
     public DateTime CreatedAt { get; set; }
 }

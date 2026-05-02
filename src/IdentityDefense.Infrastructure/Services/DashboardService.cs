@@ -38,6 +38,8 @@ public class DashboardService : IDashboardService
                     Subject = x.Subject,
                     RiskScore = x.RiskScore,
                     Classification = x.Classification,
+                    DetectedSignals = x.DetectedSignals,
+                    RiskReasons = x.RiskReasons,
                     CreatedAt = x.CreatedAt
                 })
                 .ToList()

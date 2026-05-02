@@ -38,6 +38,8 @@ type RecentRiskCase = {
   subject: string;
   riskScore: number;
   classification: string;
+  detectedSignals: string[];
+  riskReasons: string[];
   createdAt: string;
 };
 
@@ -684,31 +686,27 @@ function App() {
             </div>
 
             <div className="analysis-box">
-              <h3>Recommended Response</h3>
+              <h3>Detected Signals</h3>
 
-              {selectedCase.classification === "Critical" && (
-                <p>
-                  Immediate containment recommended. Freeze workflow, escalate to fraud operations and validate identity manually.
-                </p>
-              )}
+              <div className="reason-list">
+                {selectedCase.detectedSignals?.map((signal) => (
+                  <div className="reason-item" key={signal}>
+                    {signal.replaceAll("_", " ")}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-              {selectedCase.classification === "High" && (
-                <p>
-                  Strong anomaly indicators detected. Require step-up authentication and analyst review.
-                </p>
-              )}
+            <div className="analysis-box">
+              <h3>Risk Explanation</h3>
 
-              {selectedCase.classification === "Medium" && (
-                <p>
-                  Moderate anomaly pattern. Request secondary verification and monitor recurrence.
-                </p>
-              )}
-
-              {selectedCase.classification === "Low" && (
-                <p>
-                  Low confidence anomaly. Passive monitoring recommended.
-                </p>
-              )}
+              <div className="reason-list">
+                {selectedCase.riskReasons?.map((reason) => (
+                  <div className="reason-item" key={reason}>
+                    {reason}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="detail-footer">

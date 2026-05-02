@@ -660,3 +660,24 @@ select:focus {
   background: rgba(244, 63, 94, 0.14);
   border: 1px solid rgba(244, 63, 94, 0.22);
 }
+
+.reason-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reason-item {
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #cfe7ff;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(125, 211, 252, 0.14);
+  line-height: 1.5;
+}
+
+.reason-item::before {
+  content: "•";
+  color: #7dd3fc;
+  margin-right: 8px;
+}
