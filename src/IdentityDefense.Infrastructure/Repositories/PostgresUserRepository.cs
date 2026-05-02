@@ -33,4 +33,17 @@ public class PostgresUserRepository : IUserRepository
         return await _context.Users
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task<IReadOnlyList<User>> GetAllAsync()
+    {
+        return await _context.Users
+            .OrderBy(x => x.Name)
+            .ToListAsync();
+    }
+
+    public async Task DeleteAsync(User user)
+    {
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+    }
 }

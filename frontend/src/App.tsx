@@ -8,6 +8,7 @@ import {
   Plus,
   X,
   LogOut,
+  Users,
 } from "lucide-react";
 import {
   PieChart,
@@ -66,6 +67,21 @@ type NewIncidentForm = {
   detectedSignals: string[];
 };
 
+type NewUserForm = {
+  name: string;
+  email: string;
+  password: string;
+  role: "Admin" | "Analyst" | "Viewer";
+};
+
+type ManagedUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: string;
+};
+
 const availableSignals = [
   "voice_clone",
   "face_mismatch",
@@ -93,9 +109,20 @@ function App() {
 
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+
   const [selectedCase, setSelectedCase] = useState<RecentRiskCase | null>(null);
   const [form, setForm] = useState<NewIncidentForm>(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [userForm, setUserForm] = useState<NewUserForm>({
+    name: "",
+    email: "",
+    password: "",
+    role: "Analyst",
+  });
+
+  const [userCreateMessage, setUserCreateMessage] = useState("");
 
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState("all");
@@ -104,8 +131,30 @@ function App() {
   const [lastTotalCases, setLastTotalCases] = useState<number | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [authError, setAuthError] = useState("");
+  const [openFilter, setOpenFilter] = useState<"channel" | "severity" | "incidentChannel" | "userRole" | null>(null);
 
-  const [openFilter, setOpenFilter] = useState<"channel" | "severity" | null>(null);
+  const [managedUsers, setManagedUsers] = useState<ManagedUser[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+
+  async function loadUsers() {
+    setUsersLoading(true);
+
+    try {
+      const response = await api.get<ManagedUser[]>("/users");
+      setManagedUsers(response.data);
+    } finally {
+      setUsersLoading(false);
+    }
+  }
+
+  async function deleteUser(id: string) {
+    const confirmed = window.confirm("Remove this user from the system?");
+
+    if (!confirmed) return;
+
+    await api.delete(`/users/${id}`);
+    await loadUsers();
+  }
 
   function CustomSelect({
     value,
@@ -116,7 +165,7 @@ function App() {
     value: string;
     options: { value: string; label: string }[];
     onChange: (value: string) => void;
-    type: "channel" | "severity";
+    type: "channel" | "severity" | "incidentChannel" | "userRole";
   }) {
     const selected = options.find((option) => option.value === value);
 
@@ -239,12 +288,36 @@ function App() {
 
     try {
       await api.post("/identity-risk-cases", form);
-
       setForm(initialForm);
       setIsModalOpen(false);
       await loadDashboard();
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function createUser() {
+    if (!userForm.name.trim() || !userForm.email.trim() || !userForm.password.trim()) {
+      setUserCreateMessage("Fill all fields before creating a user.");
+      return;
+    }
+
+    try {
+      setUserCreateMessage("");
+
+      await api.post("/auth/register", userForm);
+
+      setUserCreateMessage("User created successfully.");
+      await loadUsers();
+
+      setUserForm({
+        name: "",
+        email: "",
+        password: "",
+        role: "Analyst",
+      });
+    } catch {
+      setUserCreateMessage("Failed to create user.");
     }
   }
 
@@ -413,6 +486,19 @@ function App() {
             New Incident
           </button>
 
+          {user.role === "Admin" && (
+            <button
+              className="secondary-action"
+              onClick={() => {
+                setIsUserModalOpen(true);
+                loadUsers();
+              }}
+            >
+              <Users size={16} />
+              Manage Users
+            </button>
+          )}
+
           <div className="status-card">
             <div className="status-pulse" />
             <span>{user.name} · {user.role}</span>
@@ -500,11 +586,7 @@ function App() {
 
           <div className="chart-block" onMouseDown={(event) => event.preventDefault()}>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart
-                data={channelData}
-                barCategoryGap="32%"
-                accessibilityLayer={false}
-              >
+              <BarChart data={channelData} barCategoryGap="32%" accessibilityLayer={false}>
                 <XAxis
                   dataKey="name"
                   axisLine={{ stroke: "rgba(148, 163, 184, 0.22)" }}
@@ -642,17 +724,17 @@ function App() {
 
               <label>
                 Channel
-                <select
+                <CustomSelect
                   value={form.channel}
-                  onChange={(event) =>
-                    setForm({ ...form, channel: event.target.value })
-                  }
-                >
-                  <option value="voice">Voice</option>
-                  <option value="video">Video</option>
-                  <option value="chat">Chat</option>
-                  <option value="email">Email</option>
-                </select>
+                  type="incidentChannel"
+                  onChange={(value) => setForm({ ...form, channel: value })}
+                  options={[
+                    { value: "voice", label: "Voice" },
+                    { value: "video", label: "Video" },
+                    { value: "chat", label: "Chat" },
+                    { value: "email", label: "Email" },
+                  ]}
+                />
               </label>
 
               <label className="full">
@@ -698,6 +780,120 @@ function App() {
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Creating..." : "Create Incident"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isUserModalOpen && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <div className="modal-header">
+              <div>
+                <p className="eyebrow">Admin Console</p>
+                <h2>Create User</h2>
+              </div>
+
+              <button className="icon-button" onClick={() => setIsUserModalOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="form-grid">
+              <label>
+                Name
+                <input
+                  value={userForm.name}
+                  placeholder="Maria Analyst"
+                  onChange={(event) =>
+                    setUserForm({ ...userForm, name: event.target.value })
+                  }
+                />
+              </label>
+
+              <label>
+                Email
+                <input
+                  value={userForm.email}
+                  placeholder="maria@zcorp.dev"
+                  onChange={(event) =>
+                    setUserForm({ ...userForm, email: event.target.value })
+                  }
+                />
+              </label>
+
+              <label>
+                Password
+                <input
+                  type="password"
+                  value={userForm.password}
+                  placeholder="Temporary password"
+                  onChange={(event) =>
+                    setUserForm({ ...userForm, password: event.target.value })
+                  }
+                />
+              </label>
+
+              <label>
+                Role
+                <CustomSelect
+                  value={userForm.role}
+                  type="userRole"
+                  onChange={(value) =>
+                    setUserForm({
+                      ...userForm,
+                      role: value as NewUserForm["role"],
+                    })
+                  }
+                  options={[
+                    { value: "Admin", label: "Admin" },
+                    { value: "Analyst", label: "Analyst" },
+                    { value: "Viewer", label: "Viewer" },
+                  ]}
+                />
+              </label>
+            </div>
+
+            {userCreateMessage && (
+              <div className="auth-error">
+                {userCreateMessage}
+              </div>
+            )}
+
+            <div className="user-management-list">
+              <h3>Registered Users</h3>
+
+              {usersLoading && <div className="empty-state">Loading users...</div>}
+
+              {!usersLoading && managedUsers.map((managedUser) => (
+                <div className="managed-user-row" key={managedUser.id}>
+                  <div>
+                    <strong>{managedUser.name}</strong>
+                    <span>{managedUser.email} · {managedUser.role}</span>
+                  </div>
+
+                  <button
+                    className="danger-action"
+                    onClick={() => deleteUser(managedUser.id)}
+                    disabled={managedUser.id === user.userId}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="secondary-action"
+                onClick={() => setIsUserModalOpen(false)}
+              >
+                Cancel
+              </button>
+
+              <button className="primary-action" onClick={createUser}>
+                Create User
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-using IdentityDefense.Application.Commands;
+﻿using IdentityDefense.Application.Commands;
 using IdentityDefense.Application.Interfaces;
 using IdentityDefense.Infrastructure.Messaging;
 using IdentityDefense.Infrastructure.Repositories;
@@ -15,6 +15,9 @@ using IdentityDefense.Application.Services;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using Serilog;
+using IdentityDefense.Domain.Entities;
+using IdentityDefense.Application.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -110,6 +113,35 @@ builder.Services.AddScoped<IIdentityRiskScoringService, IdentityRiskScoringServi
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddHealthChecks();
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var users = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+
+    var adminEmail = "joao@zcorp.dev";
+
+    var existingAdmin = await users.GetByEmailAsync(adminEmail);
+
+    if (existingAdmin is null)
+    {
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword("Sentinel@123");
+
+        var adminUser = new User(
+            "Joao Admin",
+            adminEmail,
+            passwordHash,
+            "Admin"
+        );
+
+        await users.AddAsync(adminUser);
+
+        Console.WriteLine("🔥 Admin user created: joao@zcorp.dev");
+    }
+    else
+    {
+        Console.WriteLine("✅ Admin user already exists");
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {

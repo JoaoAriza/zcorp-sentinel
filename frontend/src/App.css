@@ -793,3 +793,60 @@ select {
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(129, 140, 248, 0.18));
   color: #ffffff;
 }
+
+.user-management-list {
+  margin-top: 24px;
+}
+
+.user-management-list h3 {
+  margin: 0 0 12px;
+}
+
+.managed-user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  margin-bottom: 10px;
+}
+
+.managed-user-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.managed-user-row span {
+  color: #7b8aa3;
+  font-size: 13px;
+}
+
+.danger-action {
+  border: 1px solid rgba(244, 63, 94, 0.28);
+  background: rgba(244, 63, 94, 0.12);
+  color: #fda4af;
+  border-radius: 999px;
+  padding: 9px 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.danger-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.form-grid .custom-select {
+  width: 100%;
+  min-width: 0;
+}
+
+.form-grid .custom-select-trigger {
+  height: 58px;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.7);
+}

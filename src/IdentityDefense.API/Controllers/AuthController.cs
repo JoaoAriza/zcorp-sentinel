@@ -32,6 +32,7 @@ public class AuthController : ControllerBase
         _auditService = auditService;
     }
 
+    [Authorize(Roles = "Admin")]
     [EnableRateLimiting("auth")]
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
