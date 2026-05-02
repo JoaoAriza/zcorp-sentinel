@@ -112,6 +112,7 @@ builder.Services.AddScoped<IIncidentRealtimeNotifier, SignalRIncidentRealtimeNot
 builder.Services.AddScoped<IIdentityRiskScoringService, IdentityRiskScoringService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddHealthChecks();
+builder.Services.AddScoped<IRefreshTokenHashService, RefreshTokenHashService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

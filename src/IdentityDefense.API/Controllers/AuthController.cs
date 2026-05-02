@@ -17,19 +17,22 @@ public class AuthController : ControllerBase
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IAuditService _auditService;
+    private readonly IRefreshTokenHashService _refreshTokenHashService;
 
     public AuthController(
         IUserRepository users,
         IRefreshTokenRepository refreshTokens,
         IJwtTokenService jwtTokenService,
         IRefreshTokenService refreshTokenService,
-        IAuditService auditService)
+        IAuditService auditService,
+        IRefreshTokenHashService refreshTokenHashService)
     {
         _users = users;
         _refreshTokens = refreshTokens;
         _jwtTokenService = jwtTokenService;
         _refreshTokenService = refreshTokenService;
         _auditService = auditService;
+        _refreshTokenHashService = refreshTokenHashService;
     }
 
     [Authorize(Roles = "Admin")]
@@ -58,7 +61,7 @@ public class AuthController : ControllerBase
 
         var refreshToken = new RefreshToken(
             user.Id,
-            refreshTokenValue,
+            _refreshTokenHashService.Hash(refreshTokenValue),
             DateTime.UtcNow.AddDays(14)
         );
 
@@ -130,7 +133,7 @@ public class AuthController : ControllerBase
 
         var refreshToken = new RefreshToken(
             user.Id,
-            refreshTokenValue,
+            _refreshTokenHashService.Hash(refreshTokenValue),
             DateTime.UtcNow.AddDays(14)
         );
 
@@ -160,7 +163,8 @@ public class AuthController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
     {
-        var existingRefreshToken = await _refreshTokens.GetByTokenAsync(request.RefreshToken);
+        var refreshTokenHash = _refreshTokenHashService.Hash(request.RefreshToken);
+        var existingRefreshToken = await _refreshTokens.GetByTokenAsync(refreshTokenHash);
 
         if (existingRefreshToken is null || !existingRefreshToken.IsActive)
         {
@@ -185,12 +189,12 @@ public class AuthController : ControllerBase
         var newAccessToken = _jwtTokenService.Generate(user);
         var newRefreshTokenValue = _refreshTokenService.Generate();
 
-        existingRefreshToken.Revoke(newRefreshTokenValue);
+        existingRefreshToken.Revoke(_refreshTokenHashService.Hash(newRefreshTokenValue));
         await _refreshTokens.UpdateAsync(existingRefreshToken);
 
         var newRefreshToken = new RefreshToken(
             user.Id,
-            newRefreshTokenValue,
+            _refreshTokenHashService.Hash(newRefreshTokenValue),
             DateTime.UtcNow.AddDays(14)
         );
 
