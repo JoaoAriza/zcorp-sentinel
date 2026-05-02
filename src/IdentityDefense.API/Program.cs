@@ -14,8 +14,22 @@ using IdentityDefense.API.Services;
 using IdentityDefense.Application.Services;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext()
+        .WriteTo.Console()
+        .WriteTo.File(
+            "logs/zcorp-sentinel-api.log",
+            rollingInterval: RollingInterval.Day
+        );
+});
+
 const string CorsPolicy = "FrontendPolicy";
 
 builder.Services.AddControllers();
@@ -94,6 +108,7 @@ builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IIncidentRealtimeNotifier, SignalRIncidentRealtimeNotifier>();
 builder.Services.AddScoped<IIdentityRiskScoringService, IdentityRiskScoringService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
+builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -123,5 +138,6 @@ app.MapGet("/health", () => Results.Ok(new
 
 app.MapControllers();
 app.MapHub<IncidentHub>("/hubs/incidents");
+app.MapHealthChecks("/health");
 
 app.Run();
