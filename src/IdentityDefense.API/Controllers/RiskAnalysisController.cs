@@ -4,6 +4,7 @@ using IdentityDefense.Application.Interfaces;
 using IdentityDefense.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace IdentityDefense.API.Controllers;
 
@@ -32,6 +33,7 @@ public class RiskAnalysisController : ControllerBase
         _auditService = auditService;
     }
 
+    [EnableRateLimiting("risk-analysis")]
     [HttpPost("analyze")]
     public async Task<IActionResult> Analyze([FromBody] AnalyzeRiskRequest request)
     {

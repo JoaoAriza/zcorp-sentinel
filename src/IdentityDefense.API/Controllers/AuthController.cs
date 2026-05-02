@@ -4,6 +4,7 @@ using IdentityDefense.Application.Interfaces;
 using IdentityDefense.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace IdentityDefense.API.Controllers;
 
@@ -31,6 +32,7 @@ public class AuthController : ControllerBase
         _auditService = auditService;
     }
 
+    [EnableRateLimiting("auth")]
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
@@ -81,6 +83,7 @@ public class AuthController : ControllerBase
         ));
     }
 
+    [EnableRateLimiting("auth")]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
@@ -152,6 +155,7 @@ public class AuthController : ControllerBase
         ));
     }
 
+    [EnableRateLimiting("auth")]
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
     {

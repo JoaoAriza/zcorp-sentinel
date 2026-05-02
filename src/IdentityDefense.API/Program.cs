@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using IdentityDefense.API.Hubs;
 using IdentityDefense.API.Services;
 using IdentityDefense.Application.Services;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 const string CorsPolicy = "FrontendPolicy";
@@ -63,6 +65,24 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("auth", limiter =>
+    {
+        limiter.PermitLimit = 5;
+        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.QueueLimit = 0;
+    });
+
+    options.AddFixedWindowLimiter("risk-analysis", limiter =>
+    {
+        limiter.PermitLimit = 20;
+        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.QueueLimit = 2;
+        limiter.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+});
+
 builder.Services.AddScoped<CreateIdentityRiskCaseHandler>();
 builder.Services.AddScoped<IIdentityRiskPublisher, FakeIdentityRiskPublisher>();
 builder.Services.AddScoped<IIdentityRiskCaseRepository, PostgresIdentityRiskCaseRepository>();
@@ -74,7 +94,6 @@ builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IIncidentRealtimeNotifier, SignalRIncidentRealtimeNotifier>();
 builder.Services.AddScoped<IIdentityRiskScoringService, IdentityRiskScoringService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -85,6 +104,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(CorsPolicy);
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
