@@ -128,6 +128,21 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Invalid credentials." });
         }
 
+        if (user.IsLockedOut())
+        {
+            await _auditService.LogAsync(new AuditLog(
+                user.Id,
+                user.Email,
+                "LOGIN_LOCKED_OUT",
+                "Auth",
+                null,
+                HttpContext.Connection.RemoteIpAddress?.ToString(),
+                Request.Headers.UserAgent.ToString()
+            ));
+
+            return Unauthorized(new { message = "Account temporarily locked." });
+        }
+
         var validPassword = BCrypt.Net.BCrypt.Verify(
             request.Password,
             user.PasswordHash
@@ -135,15 +150,21 @@ public class AuthController : ControllerBase
 
         if (!validPassword)
         {
+            user.RegisterFailedLogin();
+            await _users.UpdateAsync(user);
+
             await _auditService.LogAsync(new AuditLog(
                 user.Id,
                 user.Email,
-                "LOGIN_FAILED",
+                user.IsLockedOut() ? "LOGIN_LOCKED_OUT" : "LOGIN_FAILED",
                 "Auth",
                 null,
                 HttpContext.Connection.RemoteIpAddress?.ToString(),
                 Request.Headers.UserAgent.ToString()
             ));
+
+            if (user.IsLockedOut())
+                return Unauthorized(new { message = "Account temporarily locked." });
 
             return Unauthorized(new { message = "Invalid credentials." });
         }
@@ -169,6 +190,8 @@ public class AuthController : ControllerBase
             HttpContext.Connection.RemoteIpAddress?.ToString(),
             Request.Headers.UserAgent.ToString()
         ));
+        user.ResetLoginFailures();
+        await _users.UpdateAsync(user);
 
         return Ok(new
         {

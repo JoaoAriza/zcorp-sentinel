@@ -8,6 +8,8 @@ public class User
     public string PasswordHash { get; private set; } = string.Empty;
     public string Role { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
+    public int FailedLoginAttempts { get; private set; }
+    public DateTime? LockoutUntil { get; private set; }
 
     private User()
     {
@@ -38,5 +40,40 @@ public class User
 
         if (Role is not "Admin" and not "Analyst" and not "Viewer")
             throw new ArgumentException("Invalid role.");
+    }
+
+    public bool IsLockedOut()
+    {
+        return LockoutUntil.HasValue && LockoutUntil.Value > DateTime.UtcNow;
+    }
+
+    public void RegisterFailedLogin()
+    {
+        FailedLoginAttempts++;
+
+        if (FailedLoginAttempts >= 5)
+        {
+            LockoutUntil = DateTime.UtcNow.AddMinutes(15);
+        }
+    }
+
+    public void ResetLoginFailures()
+    {
+        FailedLoginAttempts = 0;
+        LockoutUntil = null;
+    }
+
+    public bool UnlockIfExpired()
+    {
+        if (!LockoutUntil.HasValue)
+            return false;
+
+        if (LockoutUntil.Value > DateTime.UtcNow)
+            return false;
+
+        FailedLoginAttempts = 0;
+        LockoutUntil = null;
+
+        return true;
     }
 }

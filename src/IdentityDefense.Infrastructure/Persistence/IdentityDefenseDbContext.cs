@@ -48,6 +48,11 @@ public class IdentityDefenseDbContext : DbContext
 
             entity.Property(x => x.CreatedAt)
                 .IsRequired();
+
+            entity.Property(x => x.FailedLoginAttempts)
+                .IsRequired();
+
+            entity.Property(x => x.LockoutUntil);
         });
 
         modelBuilder.Entity<RefreshToken>(entity =>
