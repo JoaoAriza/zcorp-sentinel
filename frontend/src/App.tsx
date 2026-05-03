@@ -252,37 +252,31 @@ function App() {
     }
   }
 
-async function login() {
-  try {
-    setAuthError("");
+  async function login() {
+    try {
+      setAuthError("");
 
-    const response = await api.post("/auth/login", loginForm);
+      const response = await api.post("/auth/login", loginForm);
 
-    localStorage.setItem("zcorp_token", response.data.token);
+      localStorage.setItem("zcorp_token", response.data.token);
 
-    setUser({
-      userId: response.data.userId,
-      name: response.data.name,
-      email: response.data.email,
-      role: response.data.role,
-    });
+      setUser({
+        userId: response.data.userId,
+        name: response.data.name,
+        email: response.data.email,
+        role: response.data.role,
+      });
 
-    await loadDashboard();
-  } catch (error: any) {
-    console.log("LOGIN ERROR:", error);
-    console.log("STATUS:", error?.response?.status);
-    console.log("DATA:", error?.response?.data);
+      await loadDashboard();
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.Message ||
+        "Invalid credentials or unavailable API.";
 
-    const message =
-      error?.response?.data?.message ||
-      error?.response?.data?.Message ||
-      (error?.response?.status === 429
-        ? "Too many login attempts. Try again later."
-        : "Invalid credentials or unavailable API.");
-
-    setAuthError(message);
+      setAuthError(message);
+    }
   }
-}
 
   async function logout() {
     try {

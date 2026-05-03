@@ -128,6 +128,11 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Invalid credentials." });
         }
 
+        if (user.UnlockIfExpired())
+        {
+            await _users.UpdateAsync(user);
+        }
+
         if (user.IsLockedOut())
         {
             await _auditService.LogAsync(new AuditLog(
@@ -140,7 +145,14 @@ public class AuthController : ControllerBase
                 Request.Headers.UserAgent.ToString()
             ));
 
-            return Unauthorized(new { message = "Account temporarily locked." });
+            var remainingMinutes = Math.Ceiling(
+                (user.LockoutUntil!.Value - DateTime.UtcNow).TotalMinutes
+            );
+
+            return Unauthorized(new
+            {
+                message = $"Account temporarily locked. Try again in {remainingMinutes} minute(s)."
+            });
         }
 
         var validPassword = BCrypt.Net.BCrypt.Verify(

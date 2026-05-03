@@ -5356,3 +5356,304 @@ ORDER BY i."CreatedAt" DESC
 2026-05-03 16:27:57.110 -03:00 [INF] Executed action IdentityDefense.API.Controllers.DashboardController.GetSummary (IdentityDefense.API) in 5.9112ms
 2026-05-03 16:27:57.114 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.DashboardController.GetSummary (IdentityDefense.API)'
 2026-05-03 16:27:57.115 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/api/dashboard/summary - 200 null application/json; charset=utf-8 21.2727ms
+2026-05-03 16:32:46.779 -03:00 [INF] Executed DbCommand (25ms) [Parameters=[@__normalizedEmail_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FailedLoginAttempts", u."LockoutUntil", u."Name", u."PasswordHash", u."Role"
+FROM users AS u
+WHERE u."Email" = @__normalizedEmail_0
+LIMIT 1
+2026-05-03 16:32:46.912 -03:00 [INF] User profile is available. Using 'C:\Users\joaoa\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-05-03 16:32:46.965 -03:00 [INF] Now listening on: http://localhost:5283
+2026-05-03 16:32:46.997 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-03 16:32:47.031 -03:00 [INF] Hosting environment: Development
+2026-05-03 16:32:47.040 -03:00 [INF] Content root path: C:\Users\joaoa\OneDrive\Documentos\Linguagens_Codigos\Csharp\zcorp-sentinel\src\IdentityDefense.API
+2026-05-03 16:33:00.248 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/dashboard/summary - null null
+2026-05-03 16:33:00.287 -03:00 [WRN] Failed to determine the https port for redirect.
+2026-05-03 16:33:00.294 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:00.304 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/dashboard/summary - 204 null null 58.6526ms
+2026-05-03 16:33:00.648 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/me - null null
+2026-05-03 16:33:00.649 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/me - null null
+2026-05-03 16:33:00.659 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:00.661 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:00.661 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/me - 204 null null 13.2078ms
+2026-05-03 16:33:00.662 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/me - 204 null null 14.4523ms
+2026-05-03 16:33:00.664 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/api/auth/me - null null
+2026-05-03 16:33:00.675 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:00.789 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Me (IdentityDefense.API)'
+2026-05-03 16:33:00.807 -03:00 [INF] Route matched with {action = "Me", controller = "Auth"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Me() on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:33:00.822 -03:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType4`4[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-05-03 16:33:00.899 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/api/auth/me - null null
+2026-05-03 16:33:00.903 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Me (IdentityDefense.API) in 86.2407ms
+2026-05-03 16:33:00.906 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:00.907 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Me (IdentityDefense.API)'
+2026-05-03 16:33:00.912 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/api/auth/me - 200 null application/json; charset=utf-8 247.921ms
+2026-05-03 16:33:00.913 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Me (IdentityDefense.API)'
+2026-05-03 16:33:00.918 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - null null
+2026-05-03 16:33:00.919 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/api/dashboard/summary - null null
+2026-05-03 16:33:00.921 -03:00 [INF] Route matched with {action = "Me", controller = "Auth"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Me() on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:33:00.926 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:00.937 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - 204 null null 18.9887ms
+2026-05-03 16:33:00.929 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:00.941 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - null 0
+2026-05-03 16:33:00.943 -03:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType4`4[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-05-03 16:33:00.960 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.DashboardController.GetSummary (IdentityDefense.API)'
+2026-05-03 16:33:00.962 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:00.965 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Me (IdentityDefense.API) in 30.4785ms
+2026-05-03 16:33:00.970 -03:00 [INF] Executing endpoint '/hubs/incidents/negotiate'
+2026-05-03 16:33:00.976 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Me (IdentityDefense.API)'
+2026-05-03 16:33:00.982 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/api/auth/me - 200 null application/json; charset=utf-8 83.0578ms
+2026-05-03 16:33:00.979 -03:00 [INF] Route matched with {action = "GetSummary", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSummary() on controller IdentityDefense.API.Controllers.DashboardController (IdentityDefense.API).
+2026-05-03 16:33:00.985 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - null null
+2026-05-03 16:33:00.990 -03:00 [INF] Executed endpoint '/hubs/incidents/negotiate'
+2026-05-03 16:33:01.005 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - 200 316 application/json 63.6884ms
+2026-05-03 16:33:01.002 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.019 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - 204 null null 33.6676ms
+2026-05-03 16:33:01.022 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - null 0
+2026-05-03 16:33:01.036 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.039 -03:00 [INF] Executing endpoint '/hubs/incidents/negotiate'
+2026-05-03 16:33:01.046 -03:00 [INF] Executed endpoint '/hubs/incidents/negotiate'
+2026-05-03 16:33:01.049 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - 200 316 application/json 27.3808ms
+2026-05-03 16:33:01.054 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=2cFTfilvKv-lMFw2XFaXrQ&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZDRlZjA0Ny1jYmZmLTQzMWQtYjE2NC01OTFiZmU2ZjEyZTMiLCJlbWFpbCI6ImpvYW9AemNvcnAuZGV2IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIwZDRlZjA0Ny1jYmZmLTQzMWQtYjE2NC01OTFiZmU2ZjEyZTMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9hbyBBbmFseXN0IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiam9hb0B6Y29ycC5kZXYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc3Nzg2NTA0NiwiaXNzIjoiWkNvcnBTZW50aW5lbCIsImF1ZCI6IlpDb3JwU2VudGluZWxVc2VycyJ9.an0g09P8p-rl7SzO3fM_Z1QSkDJ0rEYB6ElAsvgVUt8 - null null
+2026-05-03 16:33:01.068 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.072 -03:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-05-03 16:33:01.080 -03:00 [INF] AuthenticationScheme: Bearer was challenged.
+2026-05-03 16:33:01.086 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=2cFTfilvKv-lMFw2XFaXrQ&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZDRlZjA0Ny1jYmZmLTQzMWQtYjE2NC01OTFiZmU2ZjEyZTMiLCJlbWFpbCI6ImpvYW9AemNvcnAuZGV2IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIwZDRlZjA0Ny1jYmZmLTQzMWQtYjE2NC01OTFiZmU2ZjEyZTMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9hbyBBbmFseXN0IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiam9hb0B6Y29ycC5kZXYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc3Nzg2NTA0NiwiaXNzIjoiWkNvcnBTZW50aW5lbCIsImF1ZCI6IlpDb3JwU2VudGluZWxVc2VycyJ9.an0g09P8p-rl7SzO3fM_Z1QSkDJ0rEYB6ElAsvgVUt8 - 401 0 null 31.7078ms
+2026-05-03 16:33:01.092 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - null null
+2026-05-03 16:33:01.138 -03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT i."Id", i."Channel", i."Classification", i."CreatedAt", i."DetectedSignals", i."RiskReasons", i."RiskScore", i."Source", i."Subject"
+FROM identity_risk_cases AS i
+ORDER BY i."CreatedAt" DESC
+2026-05-03 16:33:01.148 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.163 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - 204 null null 71.3212ms
+2026-05-03 16:33:01.166 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - null 0
+2026-05-03 16:33:01.177 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.179 -03:00 [INF] Executing endpoint '/hubs/incidents/negotiate'
+2026-05-03 16:33:01.180 -03:00 [INF] Executed endpoint '/hubs/incidents/negotiate'
+2026-05-03 16:33:01.183 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - 200 316 application/json 16.7543ms
+2026-05-03 16:33:01.189 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=BOksX3I8nlLPdNrJ3lDztQ&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZDRlZjA0Ny1jYmZmLTQzMWQtYjE2NC01OTFiZmU2ZjEyZTMiLCJlbWFpbCI6ImpvYW9AemNvcnAuZGV2IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIwZDRlZjA0Ny1jYmZmLTQzMWQtYjE2NC01OTFiZmU2ZjEyZTMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9hbyBBbmFseXN0IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiam9hb0B6Y29ycC5kZXYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc3Nzg2NTA0NiwiaXNzIjoiWkNvcnBTZW50aW5lbCIsImF1ZCI6IlpDb3JwU2VudGluZWxVc2VycyJ9.an0g09P8p-rl7SzO3fM_Z1QSkDJ0rEYB6ElAsvgVUt8 - null null
+2026-05-03 16:33:01.195 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.197 -03:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-05-03 16:33:01.199 -03:00 [INF] AuthenticationScheme: Bearer was challenged.
+2026-05-03 16:33:01.200 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=BOksX3I8nlLPdNrJ3lDztQ&access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZDRlZjA0Ny1jYmZmLTQzMWQtYjE2NC01OTFiZmU2ZjEyZTMiLCJlbWFpbCI6ImpvYW9AemNvcnAuZGV2IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIwZDRlZjA0Ny1jYmZmLTQzMWQtYjE2NC01OTFiZmU2ZjEyZTMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiSm9hbyBBbmFseXN0IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiam9hb0B6Y29ycC5kZXYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc3Nzg2NTA0NiwiaXNzIjoiWkNvcnBTZW50aW5lbCIsImF1ZCI6IlpDb3JwU2VudGluZWxVc2VycyJ9.an0g09P8p-rl7SzO3fM_Z1QSkDJ0rEYB6ElAsvgVUt8 - 401 0 null 10.7028ms
+2026-05-03 16:33:01.204 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - null null
+2026-05-03 16:33:01.212 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.214 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - 204 null null 10.681ms
+2026-05-03 16:33:01.217 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - null 0
+2026-05-03 16:33:01.228 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.232 -03:00 [INF] Executing endpoint '/hubs/incidents/negotiate'
+2026-05-03 16:33:01.234 -03:00 [INF] Executed endpoint '/hubs/incidents/negotiate'
+2026-05-03 16:33:01.236 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/hubs/incidents/negotiate?negotiateVersion=1 - 200 316 application/json 19.1632ms
+2026-05-03 16:33:01.237 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781236 - null null
+2026-05-03 16:33:01.250 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.252 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781236 - 204 null null 14.5485ms
+2026-05-03 16:33:01.255 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781236 - null null
+2026-05-03 16:33:01.266 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.268 -03:00 [INF] Executing endpoint '/hubs/incidents'
+2026-05-03 16:33:01.276 -03:00 [INF] Executing OkObjectResult, writing value of type 'IdentityDefense.Application.DTOs.DashboardSummaryDto'.
+2026-05-03 16:33:01.282 -03:00 [INF] Executed endpoint '/hubs/incidents'
+2026-05-03 16:33:01.284 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781236 - 200 0 application/octet-stream 28.6681ms
+2026-05-03 16:33:01.286 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781284 - null null
+2026-05-03 16:33:01.286 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - null null
+2026-05-03 16:33:01.300 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.295 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.302 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - 204 null null 16.2877ms
+2026-05-03 16:33:01.304 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781284 - 204 null null 18.159ms
+2026-05-03 16:33:01.306 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - text/plain;charset=UTF-8 32
+2026-05-03 16:33:01.306 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781284 - null null
+2026-05-03 16:33:01.320 -03:00 [INF] Executed action IdentityDefense.API.Controllers.DashboardController.GetSummary (IdentityDefense.API) in 323.3352ms
+2026-05-03 16:33:01.321 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.323 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/api/dashboard/summary - null null
+2026-05-03 16:33:01.326 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.328 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.DashboardController.GetSummary (IdentityDefense.API)'
+2026-05-03 16:33:01.329 -03:00 [INF] Executing endpoint '/hubs/incidents'
+2026-05-03 16:33:01.333 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.335 -03:00 [INF] Executing endpoint '/hubs/incidents'
+2026-05-03 16:33:01.341 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/api/dashboard/summary - 200 null application/json; charset=utf-8 422.0607ms
+2026-05-03 16:33:01.342 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.DashboardController.GetSummary (IdentityDefense.API)'
+2026-05-03 16:33:01.345 -03:00 [INF] Executed endpoint '/hubs/incidents'
+2026-05-03 16:33:01.350 -03:00 [INF] Executed endpoint '/hubs/incidents'
+2026-05-03 16:33:01.357 -03:00 [INF] Route matched with {action = "GetSummary", controller = "Dashboard"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSummary() on controller IdentityDefense.API.Controllers.DashboardController (IdentityDefense.API).
+2026-05-03 16:33:01.359 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - 200 0 text/plain 52.7707ms
+2026-05-03 16:33:01.361 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781284 - 200 3 application/octet-stream 54.352ms
+2026-05-03 16:33:01.383 -03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT i."Id", i."Channel", i."Classification", i."CreatedAt", i."DetectedSignals", i."RiskReasons", i."RiskScore", i."Source", i."Subject"
+FROM identity_risk_cases AS i
+ORDER BY i."CreatedAt" DESC
+2026-05-03 16:33:01.388 -03:00 [INF] Executing OkObjectResult, writing value of type 'IdentityDefense.Application.DTOs.DashboardSummaryDto'.
+2026-05-03 16:33:01.391 -03:00 [INF] Executed action IdentityDefense.API.Controllers.DashboardController.GetSummary (IdentityDefense.API) in 27.7598ms
+2026-05-03 16:33:01.393 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.DashboardController.GetSummary (IdentityDefense.API)'
+2026-05-03 16:33:01.394 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/api/dashboard/summary - 200 null application/json; charset=utf-8 71.4821ms
+2026-05-03 16:33:01.442 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781440 - null null
+2026-05-03 16:33:01.449 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.451 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781440 - 204 null null 8.8905ms
+2026-05-03 16:33:01.453 -03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781440 - null null
+2026-05-03 16:33:01.459 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:01.461 -03:00 [INF] Executing endpoint '/hubs/incidents'
+2026-05-03 16:33:02.698 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/logout - null null
+2026-05-03 16:33:02.707 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:02.709 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/logout - 204 null null 11.6696ms
+2026-05-03 16:33:02.712 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/logout - null 0
+2026-05-03 16:33:02.718 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:02.720 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Logout (IdentityDefense.API)'
+2026-05-03 16:33:02.724 -03:00 [INF] Route matched with {action = "Logout", controller = "Auth"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Logout() on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:33:02.735 -03:00 [INF] Executing StatusCodeResult, setting HTTP status code 204
+2026-05-03 16:33:02.736 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Logout (IdentityDefense.API) in 10.2846ms
+2026-05-03 16:33:02.738 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Logout (IdentityDefense.API)'
+2026-05-03 16:33:02.740 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/logout - 204 null null 28.1729ms
+2026-05-03 16:33:02.748 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - null null
+2026-05-03 16:33:02.748 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - null null
+2026-05-03 16:33:02.749 -03:00 [INF] Executed endpoint '/hubs/incidents'
+2026-05-03 16:33:02.751 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:02.754 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:02.756 -03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg&_=1777836781440 - 499 null null 1303.5124ms
+2026-05-03 16:33:02.758 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - 204 null null 10.3753ms
+2026-05-03 16:33:02.759 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - 204 null null 11.76ms
+2026-05-03 16:33:02.762 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - text/plain;charset=UTF-8 11
+2026-05-03 16:33:02.763 -03:00 [INF] Request starting HTTP/1.1 DELETE http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - null null
+2026-05-03 16:33:02.776 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:02.780 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:02.781 -03:00 [INF] Executing endpoint '/hubs/incidents'
+2026-05-03 16:33:02.781 -03:00 [INF] Executing endpoint '/hubs/incidents'
+2026-05-03 16:33:02.782 -03:00 [INF] Executed endpoint '/hubs/incidents'
+2026-05-03 16:33:02.786 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - 200 0 text/plain 23.9459ms
+2026-05-03 16:33:02.788 -03:00 [INF] Executed endpoint '/hubs/incidents'
+2026-05-03 16:33:02.795 -03:00 [INF] Request finished HTTP/1.1 DELETE http://localhost:5283/hubs/incidents?id=pATpJtbWgIUxv7u6iwrCQg - 202 0 text/plain 31.4882ms
+2026-05-03 16:33:07.057 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - null null
+2026-05-03 16:33:07.064 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:07.067 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - 204 null null 10.1546ms
+2026-05-03 16:33:07.070 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 46
+2026-05-03 16:33:07.080 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:07.089 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:07.103 -03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(IdentityDefense.Application.DTOs.Auth.LoginRequest) on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:33:07.164 -03:00 [INF] Executed DbCommand (3ms) [Parameters=[@__normalizedEmail_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FailedLoginAttempts", u."LockoutUntil", u."Name", u."PasswordHash", u."Role"
+FROM users AS u
+WHERE u."Email" = @__normalizedEmail_0
+LIMIT 1
+2026-05-03 16:33:07.745 -03:00 [INF] Executed DbCommand (9ms) [Parameters=[@p7='?' (DbType = Guid), @p0='?' (DbType = DateTime), @p1='?', @p2='?' (DbType = Int32), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?'], CommandType='"Text"', CommandTimeout='30']
+UPDATE users SET "CreatedAt" = @p0, "Email" = @p1, "FailedLoginAttempts" = @p2, "LockoutUntil" = @p3, "Name" = @p4, "PasswordHash" = @p5, "Role" = @p6
+WHERE "Id" = @p7;
+2026-05-03 16:33:07.850 -03:00 [INF] Executed DbCommand (5ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?', @p5='?', @p6='?', @p7='?', @p8='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO audit_logs ("Id", "Action", "CreatedAt", "IpAddress", "Resource", "ResourceId", "UserAgent", "UserEmail", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+2026-05-03 16:33:07.859 -03:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType1`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-05-03 16:33:07.867 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API) in 758.3134ms
+2026-05-03 16:33:07.873 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:07.877 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 401 null application/json; charset=utf-8 807.7051ms
+2026-05-03 16:33:08.575 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 46
+2026-05-03 16:33:08.581 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:08.583 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:08.586 -03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(IdentityDefense.Application.DTOs.Auth.LoginRequest) on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:33:08.596 -03:00 [INF] Executed DbCommand (3ms) [Parameters=[@__normalizedEmail_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FailedLoginAttempts", u."LockoutUntil", u."Name", u."PasswordHash", u."Role"
+FROM users AS u
+WHERE u."Email" = @__normalizedEmail_0
+LIMIT 1
+2026-05-03 16:33:08.970 -03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p7='?' (DbType = Guid), @p0='?' (DbType = DateTime), @p1='?', @p2='?' (DbType = Int32), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?'], CommandType='"Text"', CommandTimeout='30']
+UPDATE users SET "CreatedAt" = @p0, "Email" = @p1, "FailedLoginAttempts" = @p2, "LockoutUntil" = @p3, "Name" = @p4, "PasswordHash" = @p5, "Role" = @p6
+WHERE "Id" = @p7;
+2026-05-03 16:33:08.982 -03:00 [INF] Executed DbCommand (5ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?', @p5='?', @p6='?', @p7='?', @p8='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO audit_logs ("Id", "Action", "CreatedAt", "IpAddress", "Resource", "ResourceId", "UserAgent", "UserEmail", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+2026-05-03 16:33:08.987 -03:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType1`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-05-03 16:33:08.992 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API) in 402.7335ms
+2026-05-03 16:33:08.995 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:08.998 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 401 null application/json; charset=utf-8 422.6673ms
+2026-05-03 16:33:09.405 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 46
+2026-05-03 16:33:09.409 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:09.412 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:09.413 -03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(IdentityDefense.Application.DTOs.Auth.LoginRequest) on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:33:09.420 -03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__normalizedEmail_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FailedLoginAttempts", u."LockoutUntil", u."Name", u."PasswordHash", u."Role"
+FROM users AS u
+WHERE u."Email" = @__normalizedEmail_0
+LIMIT 1
+2026-05-03 16:33:09.647 -03:00 [INF] Executed DbCommand (8ms) [Parameters=[@p7='?' (DbType = Guid), @p0='?' (DbType = DateTime), @p1='?', @p2='?' (DbType = Int32), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?'], CommandType='"Text"', CommandTimeout='30']
+UPDATE users SET "CreatedAt" = @p0, "Email" = @p1, "FailedLoginAttempts" = @p2, "LockoutUntil" = @p3, "Name" = @p4, "PasswordHash" = @p5, "Role" = @p6
+WHERE "Id" = @p7;
+2026-05-03 16:33:09.662 -03:00 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?', @p5='?', @p6='?', @p7='?', @p8='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO audit_logs ("Id", "Action", "CreatedAt", "IpAddress", "Resource", "ResourceId", "UserAgent", "UserEmail", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+2026-05-03 16:33:09.667 -03:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType1`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-05-03 16:33:09.671 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API) in 254.6491ms
+2026-05-03 16:33:09.675 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:09.679 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 401 null application/json; charset=utf-8 274.4525ms
+2026-05-03 16:33:10.054 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 46
+2026-05-03 16:33:10.062 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:10.064 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:10.066 -03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(IdentityDefense.Application.DTOs.Auth.LoginRequest) on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:33:10.082 -03:00 [INF] Executed DbCommand (5ms) [Parameters=[@__normalizedEmail_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FailedLoginAttempts", u."LockoutUntil", u."Name", u."PasswordHash", u."Role"
+FROM users AS u
+WHERE u."Email" = @__normalizedEmail_0
+LIMIT 1
+2026-05-03 16:33:10.311 -03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p7='?' (DbType = Guid), @p0='?' (DbType = DateTime), @p1='?', @p2='?' (DbType = Int32), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?'], CommandType='"Text"', CommandTimeout='30']
+UPDATE users SET "CreatedAt" = @p0, "Email" = @p1, "FailedLoginAttempts" = @p2, "LockoutUntil" = @p3, "Name" = @p4, "PasswordHash" = @p5, "Role" = @p6
+WHERE "Id" = @p7;
+2026-05-03 16:33:10.321 -03:00 [INF] Executed DbCommand (5ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?', @p5='?', @p6='?', @p7='?', @p8='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO audit_logs ("Id", "Action", "CreatedAt", "IpAddress", "Resource", "ResourceId", "UserAgent", "UserEmail", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+2026-05-03 16:33:10.330 -03:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType1`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-05-03 16:33:10.334 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API) in 258.2817ms
+2026-05-03 16:33:10.337 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:10.338 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 401 null application/json; charset=utf-8 284.6212ms
+2026-05-03 16:33:10.711 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 46
+2026-05-03 16:33:10.718 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:10.720 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:10.725 -03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(IdentityDefense.Application.DTOs.Auth.LoginRequest) on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:33:10.732 -03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__normalizedEmail_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FailedLoginAttempts", u."LockoutUntil", u."Name", u."PasswordHash", u."Role"
+FROM users AS u
+WHERE u."Email" = @__normalizedEmail_0
+LIMIT 1
+2026-05-03 16:33:10.972 -03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p7='?' (DbType = Guid), @p0='?' (DbType = DateTime), @p1='?', @p2='?' (DbType = Int32), @p3='?' (DbType = DateTime), @p4='?', @p5='?', @p6='?'], CommandType='"Text"', CommandTimeout='30']
+UPDATE users SET "CreatedAt" = @p0, "Email" = @p1, "FailedLoginAttempts" = @p2, "LockoutUntil" = @p3, "Name" = @p4, "PasswordHash" = @p5, "Role" = @p6
+WHERE "Id" = @p7;
+2026-05-03 16:33:10.988 -03:00 [INF] Executed DbCommand (8ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?', @p5='?', @p6='?', @p7='?', @p8='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO audit_logs ("Id", "Action", "CreatedAt", "IpAddress", "Resource", "ResourceId", "UserAgent", "UserEmail", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+2026-05-03 16:33:10.994 -03:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType1`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-05-03 16:33:10.997 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API) in 268.0878ms
+2026-05-03 16:33:11.000 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:33:11.003 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 401 null application/json; charset=utf-8 292.1483ms
+2026-05-03 16:33:11.447 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 46
+2026-05-03 16:33:11.465 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:11.469 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 503 0 null 21.8665ms
+2026-05-03 16:33:12.383 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - null null
+2026-05-03 16:33:12.394 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:12.397 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - 204 null null 14.3849ms
+2026-05-03 16:33:12.402 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 46
+2026-05-03 16:33:12.414 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:12.417 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 503 0 null 15.0289ms
+2026-05-03 16:33:36.546 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - null null
+2026-05-03 16:33:36.555 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:36.557 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - 204 null null 10.8492ms
+2026-05-03 16:33:36.560 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 46
+2026-05-03 16:33:36.572 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:36.579 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 503 0 null 19.7531ms
+2026-05-03 16:33:55.699 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - null null
+2026-05-03 16:33:55.705 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:55.707 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - 204 null null 8.0093ms
+2026-05-03 16:33:55.710 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 52
+2026-05-03 16:33:55.722 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:33:55.725 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 503 0 null 14.4196ms
+2026-05-03 16:37:43.465 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - null null
+2026-05-03 16:37:43.471 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:37:43.473 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - 204 null null 8.3051ms
+2026-05-03 16:37:43.477 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 52
+2026-05-03 16:37:43.486 -03:00 [INF] CORS policy execution successful.
+2026-05-03 16:37:43.488 -03:00 [INF] Executing endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:37:43.489 -03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(IdentityDefense.Application.DTOs.Auth.LoginRequest) on controller IdentityDefense.API.Controllers.AuthController (IdentityDefense.API).
+2026-05-03 16:37:43.497 -03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__normalizedEmail_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FailedLoginAttempts", u."LockoutUntil", u."Name", u."PasswordHash", u."Role"
+FROM users AS u
+WHERE u."Email" = @__normalizedEmail_0
+LIMIT 1
+2026-05-03 16:37:43.503 -03:00 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?', @p5='?', @p6='?', @p7='?', @p8='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO audit_logs ("Id", "Action", "CreatedAt", "IpAddress", "Resource", "ResourceId", "UserAgent", "UserEmail", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+2026-05-03 16:37:43.506 -03:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType1`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-05-03 16:37:43.508 -03:00 [INF] Executed action IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API) in 15.89ms
+2026-05-03 16:37:43.510 -03:00 [INF] Executed endpoint 'IdentityDefense.API.Controllers.AuthController.Login (IdentityDefense.API)'
+2026-05-03 16:37:43.513 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 401 null application/json; charset=utf-8 35.7492ms
