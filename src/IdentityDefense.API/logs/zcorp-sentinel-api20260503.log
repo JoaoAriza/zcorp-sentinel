@@ -5741,3 +5741,59 @@ System.Net.Sockets.SocketException (11001): Este host não é conhecido.
    at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
    at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
    at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2026-05-03 17:38:14.439 -03:00 [INF] Executed DbCommand (29ms) [Parameters=[@__normalizedEmail_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FailedLoginAttempts", u."LockoutUntil", u."Name", u."PasswordHash", u."Role"
+FROM users AS u
+WHERE u."Email" = @__normalizedEmail_0
+LIMIT 1
+2026-05-03 17:38:14.587 -03:00 [INF] User profile is available. Using 'C:\Users\joaoa\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-05-03 17:38:14.674 -03:00 [INF] Now listening on: http://localhost:5283
+2026-05-03 17:38:14.677 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-03 17:38:14.679 -03:00 [INF] Hosting environment: Development
+2026-05-03 17:38:14.680 -03:00 [INF] Content root path: C:\Users\joaoa\OneDrive\Documentos\Linguagens_Codigos\Csharp\zcorp-sentinel\src\IdentityDefense.API
+2026-05-03 19:00:39.867 -03:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - null null
+2026-05-03 19:00:39.932 -03:00 [WRN] Failed to determine the https port for redirect.
+2026-05-03 19:00:39.943 -03:00 [INF] CORS policy execution successful.
+2026-05-03 19:00:39.958 -03:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5283/api/auth/login - 204 null null 94.7111ms
+2026-05-03 19:00:39.965 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 52
+2026-05-03 19:00:39.996 -03:00 [INF] CORS policy execution successful.
+2026-05-03 19:00:40.054 -03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: JWT secret is not configured.
+   at Program.<>c__DisplayClass0_0.<<Main>$>b__1(JwtBearerOptions options) in C:\Users\joaoa\OneDrive\Documentos\Linguagens_Codigos\Csharp\zcorp-sentinel\src\IdentityDefense.API\Program.cs:line 51
+   at Microsoft.Extensions.Options.ConfigureNamedOptions`1.Configure(String name, TOptions options)
+   at Microsoft.Extensions.Options.OptionsFactory`1.Create(String name)
+   at Microsoft.Extensions.Options.OptionsMonitor`1.<>c.<Get>b__10_0(String name, IOptionsFactory`1 factory)
+   at Microsoft.Extensions.Options.OptionsCache`1.<>c__DisplayClass3_1`1.<GetOrAdd>b__2()
+   at System.Lazy`1.ViaFactory(LazyThreadSafetyMode mode)
+   at System.Lazy`1.ExecutionAndPublication(LazyHelper executionAndPublication, Boolean useDefaultConstructor)
+   at System.Lazy`1.CreateValue()
+   at Microsoft.Extensions.Options.OptionsCache`1.GetOrAdd[TArg](String name, Func`3 createOptions, TArg factoryArgument)
+   at Microsoft.Extensions.Options.OptionsMonitor`1.Get(String name)
+   at Microsoft.AspNetCore.Authentication.AuthenticationHandler`1.InitializeAsync(AuthenticationScheme scheme, HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationHandlerProvider.GetHandlerAsync(HttpContext context, String authenticationScheme)
+   at Microsoft.AspNetCore.Authentication.AuthenticationService.AuthenticateAsync(HttpContext context, String scheme)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-05-03 19:00:40.085 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 500 null text/plain; charset=utf-8 120.6953ms
+2026-05-03 19:00:41.635 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5283/api/auth/login - application/json 52
+2026-05-03 19:00:41.697 -03:00 [INF] CORS policy execution successful.
+2026-05-03 19:00:41.703 -03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: JWT secret is not configured.
+   at Program.<>c__DisplayClass0_0.<<Main>$>b__1(JwtBearerOptions options) in C:\Users\joaoa\OneDrive\Documentos\Linguagens_Codigos\Csharp\zcorp-sentinel\src\IdentityDefense.API\Program.cs:line 51
+   at Microsoft.Extensions.Options.ConfigureNamedOptions`1.Configure(String name, TOptions options)
+   at Microsoft.Extensions.Options.OptionsFactory`1.Create(String name)
+   at Microsoft.Extensions.Options.OptionsMonitor`1.<>c.<Get>b__10_0(String name, IOptionsFactory`1 factory)
+   at Microsoft.Extensions.Options.OptionsCache`1.<>c__DisplayClass3_1`1.<GetOrAdd>b__2()
+   at System.Lazy`1.ViaFactory(LazyThreadSafetyMode mode)
+--- End of stack trace from previous location ---
+   at System.Lazy`1.CreateValue()
+   at Microsoft.Extensions.Options.OptionsCache`1.GetOrAdd[TArg](String name, Func`3 createOptions, TArg factoryArgument)
+   at Microsoft.Extensions.Options.OptionsMonitor`1.Get(String name)
+   at Microsoft.AspNetCore.Authentication.AuthenticationHandler`1.InitializeAsync(AuthenticationScheme scheme, HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationHandlerProvider.GetHandlerAsync(HttpContext context, String authenticationScheme)
+   at Microsoft.AspNetCore.Authentication.AuthenticationService.AuthenticateAsync(HttpContext context, String scheme)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2026-05-03 19:00:41.712 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5283/api/auth/login - 500 null text/plain; charset=utf-8 77.071ms
