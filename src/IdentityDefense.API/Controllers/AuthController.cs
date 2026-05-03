@@ -35,6 +35,26 @@ public class AuthController : ControllerBase
         _refreshTokenHashService = refreshTokenHashService;
     }
 
+    private void SetRefreshTokenCookie(string refreshToken)
+    {
+        Response.Cookies.Append("zcorp_refresh_token", refreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false, // em produção: true com HTTPS
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddDays(14),
+            Path = "/api/auth"
+        });
+    }
+
+    private void ClearRefreshTokenCookie()
+    {
+        Response.Cookies.Delete("zcorp_refresh_token", new CookieOptions
+        {
+            Path = "/api/auth"
+        });
+    }
+
     [Authorize(Roles = "Admin")]
     [EnableRateLimiting("auth")]
     [HttpPost("register")]
@@ -77,14 +97,14 @@ public class AuthController : ControllerBase
             Request.Headers.UserAgent.ToString()
         ));
 
-        return Created("", new AuthResponse(
+        return Created("", new
+        {
             user.Id,
             user.Name,
             user.Email,
             user.Role,
-            accessToken,
-            refreshTokenValue
-        ));
+            user.CreatedAt
+        });
     }
 
     [EnableRateLimiting("auth")]
@@ -138,6 +158,7 @@ public class AuthController : ControllerBase
         );
 
         await _refreshTokens.AddAsync(refreshToken);
+        SetRefreshTokenCookie(refreshTokenValue);
 
         await _auditService.LogAsync(new AuditLog(
             user.Id,
@@ -149,21 +170,26 @@ public class AuthController : ControllerBase
             Request.Headers.UserAgent.ToString()
         ));
 
-        return Ok(new AuthResponse(
-            user.Id,
+        return Ok(new
+        {
+            userId = user.Id,
             user.Name,
             user.Email,
             user.Role,
-            accessToken,
-            refreshTokenValue
-        ));
+            token = accessToken
+        });
     }
 
     [EnableRateLimiting("auth")]
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
+    public async Task<IActionResult> Refresh()
     {
-        var refreshTokenHash = _refreshTokenHashService.Hash(request.RefreshToken);
+        var refreshTokenFromCookie = Request.Cookies["zcorp_refresh_token"];
+
+        if (string.IsNullOrWhiteSpace(refreshTokenFromCookie))
+            return Unauthorized(new { message = "Missing refresh token." });
+
+        var refreshTokenHash = _refreshTokenHashService.Hash(refreshTokenFromCookie);
         var existingRefreshToken = await _refreshTokens.GetByTokenAsync(refreshTokenHash);
 
         if (existingRefreshToken is null || !existingRefreshToken.IsActive)
@@ -199,6 +225,7 @@ public class AuthController : ControllerBase
         );
 
         await _refreshTokens.AddAsync(newRefreshToken);
+        SetRefreshTokenCookie(newRefreshTokenValue);
 
         await _auditService.LogAsync(new AuditLog(
             user.Id,
@@ -210,14 +237,14 @@ public class AuthController : ControllerBase
             Request.Headers.UserAgent.ToString()
         ));
 
-        return Ok(new AuthResponse(
-            user.Id,
+        return Ok(new
+        {
+            userId = user.Id,
             user.Name,
             user.Email,
             user.Role,
-            newAccessToken,
-            newRefreshTokenValue
-        ));
+            token = newAccessToken
+        });
     }
 
     [Authorize]
@@ -236,5 +263,13 @@ public class AuthController : ControllerBase
             email,
             role
         });
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        ClearRefreshTokenCookie();
+        return NoContent();
     }
 }
